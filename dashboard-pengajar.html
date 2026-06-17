@@ -158,6 +158,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.03);
             border: 1px solid rgba(255,255,255,0.5);
             backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .welcome-msg h1 {
@@ -175,18 +177,39 @@
         .user-profile-badge {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             background: #0f172a;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 100px;
             font-weight: 700;
             font-size: 0.9rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        .user-profile-badge .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .user-profile-badge .user-info .user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile-badge .user-info .user-ic {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
         .user-profile-badge i {
             color: #ff7a00;
+            font-size: 1.5rem;
         }
 
         /* ==========================================================================
@@ -246,6 +269,20 @@
             font-weight: 600;
         }
 
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* ==========================================================================
            RESPONSIVE CONFIGURATION
            ========================================================================== */
@@ -258,6 +295,8 @@
             .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
             .main-content { width: 100%; margin-left: 0; padding: 20px; }
             .top-bar { flex-direction: column; gap: 15px; text-align: center; }
+            .user-profile-badge { width: 100%; justify-content: center; }
+            .user-profile-badge .user-info { align-items: center; }
         }
 
         @media (max-width: 500px) {
@@ -306,7 +345,11 @@
                 <p>Hari ini adalah hari yang hebat untuk membimbing murid pintar cerdas.</p>
             </div>
             <div class="user-profile-badge">
-                <i class="fa-solid fa-user-shield"></i> PENGARANG UTAMA
+                <i class="fa-solid fa-user-shield"></i>
+                <div class="user-info">
+                    <span class="user-name" id="paparan-nama-penuh">Memuatkan...</span>
+                    <span class="user-ic" id="paparan-ic-pengajar">IC: ----------</span>
+                </div>
             </div>
         </header>
 
@@ -315,24 +358,33 @@
             <div class="stat-card stat-card-1">
                 <i class="fa-solid fa-users bg-icon"></i>
                 <p>Jumlah Pelajar</p>
-                <h2 id="total-pelajar">...</h2>
-                <span><i class="fa-solid fa-circle-nodes"></i> Data Sebenar (Live)</span>
+                <h2 id="total-pelajar"><span class="loading"></span></h2>
+                <span><i class="fa-solid fa-circle-nodes"></i> Pelajar dalam Kelas Anda</span>
             </div>
 
             <div class="stat-card stat-card-2">
                 <i class="fa-solid fa-school bg-icon"></i>
                 <p>Jumlah Kelas</p>
-                <h2 id="total-kelas">...</h2>
-                <span><i class="fa-solid fa-circle-check"></i> Semua Aktif</span>
+                <h2 id="total-kelas"><span class="loading"></span></h2>
+                <span><i class="fa-solid fa-circle-check"></i> Kelas Anda</span>
             </div>
 
         </section>
 
     </main>
 
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 
         // Konfigurasi Firebase anda
         const firebaseConfig = {
@@ -349,40 +401,128 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- 1. PAPAR NAMA PENGAJAR ---
-        const namaPengajar = sessionStorage.getItem("pengajarLogMasuk");
-        if (namaPengajar) {
-            document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaPengajar + "!";
-        } else {
-            document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
+        // Get teacher IC from session storage
+        const icPengajar = sessionStorage.getItem("pengajar_ic") || "881215085431";
+        
+        // --- 1. PAPAR NAMA DAN IC PENGAJAR ---
+        async function muatProfilPengajar() {
+            try {
+                const pengajarRef = doc(db, "pengajar", icPengajar);
+                const pengajarSnap = await getDoc(pengajarRef);
+                
+                if (pengajarSnap.exists()) {
+                    const data = pengajarSnap.data();
+                    const namaPenuh = data.namaPenuh || data.nama || "PENGAJAR REAL-MPC";
+                    
+                    // Update welcome message
+                    document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaPenuh + "!";
+                    
+                    // Update profile badge
+                    document.getElementById('paparan-nama-penuh').innerText = namaPenuh;
+                    document.getElementById('paparan-ic-pengajar').innerText = `IC: ${icPengajar}`;
+                    
+                    // Store in session for other pages
+                    sessionStorage.setItem("pengajarLogMasuk", namaPenuh);
+                } else {
+                    document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
+                    document.getElementById('paparan-nama-penuh').innerText = "Pengajar REAL-MPC";
+                    document.getElementById('paparan-ic-pengajar').innerText = `IC: ${icPengajar}`;
+                }
+            } catch (error) {
+                console.error("Error loading teacher profile:", error);
+                document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
+            }
         }
 
-        // --- 2. KIRA JUMLAH PELAJAR SECARA LIVE ---
-        // Sila pastikan nama collection di Firestore anda adalah "murid" atau "pelajar"
-        onSnapshot(collection(db, "murid"), (snapshot) => {
-            document.getElementById('total-pelajar').innerText = snapshot.size;
-        }, (error) => {
-            console.error("Ralat semak jumlah murid:", error);
-            document.getElementById('total-pelajar').innerText = "0";
+        // Load teacher profile
+        await muatProfilPengajar();
+
+        // --- 2. KIRA JUMLAH KELAS YANG DIBUAT OLEH PENGAJAR INI ---
+        function kiraKelasPengajar() {
+            const kelasCountElement = document.getElementById('total-kelas');
+            
+            // Query kelas where 'pengajarIC' equals this teacher's IC
+            const kelasQuery = query(
+                collection(db, "kelas"),
+                where("pengajarIC", "==", icPengajar)
+            );
+
+            const unsubscribe = onSnapshot(kelasQuery, (snapshot) => {
+                const totalKelas = snapshot.size;
+                kelasCountElement.innerText = totalKelas;
+                
+                // Animation effect
+                kelasCountElement.style.transition = 'all 0.3s ease';
+                kelasCountElement.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    kelasCountElement.style.transform = 'scale(1)';
+                }, 300);
+            }, (error) => {
+                console.error("Error counting classes:", error);
+                kelasCountElement.innerText = "0";
+            });
+
+            return unsubscribe;
+        }
+
+        // --- 3. KIRA JUMLAH PELAJAR YANG JOIN KELAS PENGAJAR INI ---
+        function kiraPelajarPengajar() {
+            const pelajarCountElement = document.getElementById('total-pelajar');
+            
+            // First, get all classes by this teacher
+            const kelasQuery = query(
+                collection(db, "kelas"),
+                where("pengajarIC", "==", icPengajar)
+            );
+
+            let unsubscribeKelas = onSnapshot(kelasQuery, async (kelasSnapshot) => {
+                // Collect all student ICs from all classes
+                const allStudentICs = new Set();
+                
+                kelasSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const senaraiPelajar = data.senaraiPelajar || [];
+                    senaraiPelajar.forEach(ic => allStudentICs.add(ic));
+                });
+
+                // Update the count
+                const totalPelajar = allStudentICs.size;
+                pelajarCountElement.innerText = totalPelajar;
+                
+                // Animation effect
+                pelajarCountElement.style.transition = 'all 0.3s ease';
+                pelajarCountElement.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    pelajarCountElement.style.transform = 'scale(1)';
+                }, 300);
+                
+            }, (error) => {
+                console.error("Error counting students:", error);
+                pelajarCountElement.innerText = "0";
+            });
+
+            return unsubscribeKelas;
+        }
+
+        // Start listening
+        const unsubscribeKelas = kiraKelasPengajar();
+        const unsubscribePelajar = kiraPelajarPengajar();
+
+        // Cleanup listeners when page unloads
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeKelas) unsubscribeKelas();
+            if (unsubscribePelajar) unsubscribePelajar();
         });
 
-        // --- 3. KIRA JUMLAH KELAS SECARA LIVE ---
-        // Sila pastikan nama collection di Firestore anda adalah "kelas"
-        onSnapshot(collection(db, "kelas"), (snapshot) => {
-            document.getElementById('total-kelas').innerText = snapshot.size;
-        }, (error) => {
-            console.error("Ralat semak jumlah kelas:", error);
-            document.getElementById('total-kelas').innerText = "0";
-        });
-    </script>
-
-    <script>
-        function logoutAkaun() {
+        // Handle logout
+        window.logoutAkaun = function() {
             if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
                 sessionStorage.clear();
                 window.location.href = "login-pengajar.html";
             }
-        }
+        };
+
+        console.log("Teacher IC:", icPengajar);
     </script>
 
 </body>
