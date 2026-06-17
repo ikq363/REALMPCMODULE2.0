@@ -69,6 +69,20 @@
         .stat-card p { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.9; }
         .stat-card h2 { font-size: 3.8rem; font-weight: 800; margin: 15px 0 10px 0; }
         .stat-card span { font-size: 0.9rem; background: rgba(255,255,255,0.25); padding: 6px 14px; border-radius: 100px; }
+
+        .loading { 
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -109,15 +123,24 @@
             <div class="stat-card">
                 <i class="fa-solid fa-school bg-icon"></i>
                 <p>Jumlah Kelas Disertai</p>
-                <h2 id="total-kelas-pelajar">...</h2>
+                <h2 id="total-kelas-pelajar"><span class="loading"></span></h2>
                 <span><i class="fa-solid fa-circle-check"></i> Status Terkini</span>
             </div>
         </section>
     </main>
 
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
@@ -129,29 +152,77 @@
             measurementId: "G-XD3VQ7JKKB"
         };
 
-        const db = getFirestore(initializeApp(firebaseConfig));
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
+        // Get student name from session storage
         const namaPelajar = sessionStorage.getItem("pelajarLogMasuk");
+        const displayElement = document.getElementById('paparan-nama-pelajar');
+        
         if (namaPelajar) {
-            document.getElementById('paparan-nama-pelajar').innerText = "Hai, " + namaPelajar + "!";
+            displayElement.innerText = "Hai, " + namaPelajar + "!";
         } else {
-            document.getElementById('paparan-nama-pelajar').innerText = "Selamat Datang, Pelajar!";
+            displayElement.innerText = "Selamat Datang, Pelajar!";
         }
 
-        onSnapshot(collection(db, "kelas"), (snapshot) => {
-            document.getElementById('total-kelas-pelajar').innerText = snapshot.size;
-        }, (error) => {
-            document.getElementById('total-kelas-pelajar').innerText = "0";
-        });
-    </script>
+        // Function to count classes joined by the student
+        function updateStudentClasses() {
+            const kelasCountElement = document.getElementById('total-kelas-pelajar');
+            
+            // If no student name, show 0
+            if (!namaPelajar) {
+                kelasCountElement.innerText = "0";
+                return;
+            }
 
-    <script>
-        function logoutAkaun() {
+            // Query the 'kelas' collection where 'pelajar' array contains the student name
+            // Note: This assumes your Firestore structure has a 'pelajar' array field in each class document
+            const kelasQuery = query(
+                collection(db, "kelas"),
+                where("pelajar", "array-contains", namaPelajar)
+            );
+
+            // Listen for real-time updates
+            const unsubscribe = onSnapshot(kelasQuery, (snapshot) => {
+                const totalKelas = snapshot.size;
+                kelasCountElement.innerText = totalKelas;
+                
+                // Optional: Add animation or effect when count updates
+                kelasCountElement.style.transition = 'all 0.3s ease';
+                kelasCountElement.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    kelasCountElement.style.transform = 'scale(1)';
+                }, 300);
+            }, (error) => {
+                console.error("Error fetching class data:", error);
+                kelasCountElement.innerText = "0";
+            });
+
+            // Return unsubscribe function for cleanup if needed
+            return unsubscribe;
+        }
+
+        // Call the function to start listening
+        const unsubscribeClasses = updateStudentClasses();
+
+        // Cleanup listener when page is unloaded (optional)
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeClasses) {
+                unsubscribeClasses();
+            }
+        });
+
+        // Handle logout function
+        window.logoutAkaun = function() {
             if(confirm("Adakah anda pasti untuk log keluar?")) {
                 sessionStorage.clear();
                 window.location.href = "login-pelajar.html";
             }
-        }
+        };
+
+        // Debug: Log current student name
+        console.log("Student logged in:", namaPelajar);
     </script>
 </body>
 </html>
