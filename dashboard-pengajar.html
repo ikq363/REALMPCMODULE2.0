@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pengajar | REAL-MPC</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- SCRIPT SEKATAN KESELAMATAN (Mesti di atas sekali sebelum page sempat loading) -->
+    <script>
+        // Semak jika data sesi login wujud dalam browser
+        const namaPengajar = sessionStorage.getItem("pengajarLogMasuk");
+        
+        if (!namaPengajar) {
+            alert("Akses Disekat! Anda perlu log masuk terlebih dahulu untuk mengakses dashboard ini.");
+            window.location.href = "login-pengajar.html"; // Tendang balik ke page login
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --text-dark: #0f172a;
+            
+            /* Warna Palet Neon Kebabom */
+            --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            --grad-blue: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            --grad-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5100 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- SFERA CAHAYA LATAR BELAKANG --- */
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+        .glow-1 { top: 10%; left: 20%; width: 300px; height: 300px; background: #3b82f6; }
+        .glow-2 { bottom: 15%; right: 10%; width: 350px; height: 350px; background: #ff7a00; }
+
+        /* ==========================================================================
+           BAR SISI NAVIGASI (SIDEBAR)
+           ========================================================================== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-area h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .logo-area h2 span {
+            color: #ff7a00;
+        }
+
+        .logo-area p {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .menu-item.m-profile:hover { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); transform: translateX(8px); }
+        .menu-item.m-kelas:hover { background: var(--grad-blue); color: white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); transform: translateX(8px); }
+        .menu-item.m-modul:hover { background: var(--grad-purple); color: white; box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4); transform: translateX(8px); }
+        .menu-item.m-analisis:hover { background: var(--grad-emerald); color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); transform: translateX(8px); }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+
+        .logout-btn {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            cursor: pointer;
+        }
+        
+        .logout-btn:hover {
+            background: #f43f5e;
+            color: white !important;
+            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT AREA
+           ========================================================================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: var(--glass-bg);
+            padding: 25px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-msg h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .welcome-msg p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0f172a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .user-profile-badge i {
+            color: #ff7a00;
+        }
+
+        /* ==========================================================================
+           KAD STATISTIK (HANYA 2 KOTAK SEPERTI DIMINTA)
+           ========================================================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            padding: 35px;
+            border-radius: 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card-1 { background: var(--grad-blue); }
+        .stat-card-2 { background: var(--grad-purple); }
+
+        .stat-card i.bg-icon {
+            position: absolute;
+            right: -15px;
+            bottom: -15px;
+            font-size: 7.5rem;
+            opacity: 0.15;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .stat-card h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 15px 0 10px 0;
+        }
+
+        .stat-card span {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           RESPONSIVE CONFIGURATION
+           ========================================================================== */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%; min-height: auto; position: relative;
+                padding: 20px; border-radius: 0 0 24px 24px;
+            }
+            .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .main-content { width: 100%; margin-left: 0; padding: 20px; }
+            .top-bar { flex-direction: column; gap: 15px; text-align: center; }
+        }
+
+        @media (max-width: 500px) {
+            .menu-list { grid-template-columns: 1fr 1fr; display: grid; }
+            .menu-item { justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <!-- ================= BAR SISI NAVIGASI ================= -->
+    <nav class="sidebar">
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Panel Pengajar</p>
+        </div>
+
+        <div class="menu-list">
+            <a href="profile-pengajar.html" class="menu-item m-profile">
+                <i class="fa-solid fa-id-card-clip"></i> Profile
+            </a>
+            <a href="kelas-pengajar.html" class="menu-item m-kelas">
+                <i class="fa-solid fa-school"></i> Kelas Saya
+            </a>
+            <a href="modul-pengajar.html" class="menu-item m-modul">
+                <i class="fa-solid fa-book-open-reader"></i> Modul
+            </a>
+            <a href="analisis-pengajar.html" class="menu-item m-analisis">
+                <i class="fa-solid fa-chart-pie"></i> Analisis
+            </a>
+        </div>
+
+        <!-- Tombol Log Keluar Bermekanisme Padam Sesi -->
+        <a onclick="logoutAkaun()" class="menu-item logout-btn" style="margin-top: 20px;">
+            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
+    </nav>
+
+    <!-- ================= SEKSYEN KANDUNGAN UTAMA ================= -->
+    <main class="main-content">
+        
+        <!-- TOP BAR HEADER (Memaparkan Nama Pengajar Sebenar) -->
+        <header class="top-bar">
+            <div class="welcome-msg">
+                <h1 id="paparan-nama-cikgu">Selamat Datang!</h1>
+                <p>Hari ini adalah hari yang hebat untuk membimbing murid pintar cerdas.</p>
+            </div>
+            <div class="user-profile-badge">
+                <i class="fa-solid fa-user-shield"></i> PENGARANG UTAMA
+            </div>
+        </header>
+
+        <!-- KAD STATISTIK (TINGGAL 2 KOTAK SHJ) -->
+        <section class="stats-grid">
+            
+            <div class="stat-card stat-card-1">
+                <i class="fa-solid fa-users bg-icon"></i>
+                <p>Jumlah Pelajar</p>
+                <h2>142</h2>
+                <span><i class="fa-solid fa-arrow-trend-up"></i> +12 minggu ini</span>
+            </div>
+
+            <div class="stat-card stat-card-2">
+                <i class="fa-solid fa-school bg-icon"></i>
+                <p>Jumlah Kelas</p>
+                <h2>6</h2>
+                <span><i class="fa-solid fa-circle-check"></i> Semua Aktif</span>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- SCRIPT UTK PAPAR NAMA & LOGOUT -->
+    <script>
+        // Masukkan nama pengajar dari data login ke element HTML h1
+        if (namaPengajar) {
+            document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaPengajar + "!";
+        }
+
+        // Fungsi padam data sesi masa log keluar supaya auth guard di atas kembali aktif
+        function logoutAkaun() {
+            if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
+                sessionStorage.clear(); // Bersihkan nama pengajar dari memori browser
+                window.location.href = "index.html"; // Tendang balik ke main page
+            }
+        }
+    </script>
+
+</body>
+</html>
