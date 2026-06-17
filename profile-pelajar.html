@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Pelajar | REAL-MPC</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -253,7 +252,6 @@
 </head>
 <body>
 
-    <!-- ================= BAR SISI NAVIGASI (PELAJAR) ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -262,16 +260,16 @@
 
         <div class="menu-list">
             <a href="dashboard-pelajar.html" class="menu-item">
-                <i class="fa-solid fa-graduation-cap"></i> Utama
+                <i class="fa-solid fa-graduation-cap"></i> Dashboard
             </a>
             <a href="profile-pelajar.html" class="menu-item active">
                 <i class="fa-solid fa-user-gear"></i> Profil Saya
             </a>
-            <a href="modul-pelajar.html" class="menu-item">
-                <i class="fa-solid fa-book"></i> Modul Pembelajaran
+            <a href="kelas-pelajar.html" class="menu-item">
+                <i class="fa-solid fa-school"></i> Kelas Saya
             </a>
-            <a href="prestasi-pelajar.html" class="menu-item">
-                <i class="fa-solid fa-chart-simple"></i> Prestasi
+            <a href="modul-pelajar.html" class="menu-item">
+                <i class="fa-solid fa-book"></i> Modul
             </a>
         </div>
 
@@ -280,7 +278,6 @@
         </a>
     </nav>
 
-    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         <header class="top-bar">
             <div class="welcome-msg">
@@ -290,7 +287,6 @@
         </header>
 
         <section class="profile-container">
-            <!-- Kad Kiri: Paparan Nama Ringkas -->
             <div class="avatar-card">
                 <div class="avatar-box">
                     <i class="fa-solid fa-user-graduate"></i>
@@ -299,7 +295,6 @@
                 <p>Status: Aktif</p>
             </div>
 
-            <!-- Kad Kanan: Form Paparan/Kemas Kini -->
             <div class="details-card">
                 <form id="form-profil">
                     <div class="form-grid">
@@ -336,7 +331,6 @@
         </section>
     </main>
 
-    <!-- ================= FIRESTORE DATABASE LOGIC (KOLEKSI: pelajar) ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -354,23 +348,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ambil ID daripada memori session pelajar (jika ada)
         let sasarID = sessionStorage.getItem("pelajarIC") || sessionStorage.getItem("pelajarLogMasuk") || "";
 
-        // Auto-format kepada HURUF BESAR semasa mengedit nama
         document.getElementById('prof-nama').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
         });
         
-        // Buang tanda sengkang (-) secara automatik pada input IC
         document.getElementById('prof-ic').addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '');
         });
 
-        // AMBIL DATA TERDAFTAR DARI KOLEKSI 'pelajar'
         async function ambilDataProfilPelajar() {
             try {
-                // Skenario A: Jika ada data ID dalam memori, panggil dokumen tersebut terus
                 if (sasarID) {
                     const docRef = doc(db, "pelajar", sasarID);
                     const docSnap = await getDoc(docRef);
@@ -381,7 +370,6 @@
                     }
                 }
 
-                // Skenario B: Jika tiada maklumat session, scan koleksi 'pelajar' untuk ambil data teratas
                 const q = query(collection(db, "pelajar"), limit(1));
                 const querySnapshot = await getDocs(q);
                 
@@ -391,7 +379,6 @@
                         paparkanKeSkrin(doc.data());
                     });
                 } else {
-                    // Skenario C: Rekod kosong sepenuhnya dalam database
                     document.getElementById('side-nama').innerText = "Profil Baru";
                 }
             } catch (error) {
@@ -408,10 +395,8 @@
             document.getElementById('prof-ic').value = icPaparan;
         }
 
-        // Jalankan fungsi membaca data sebaik sahaja fail dibuka
         ambilDataProfilPelajar();
 
-        // SIMPAN & EDIT DATA TERUS KEPADA DOKUMEN ASAL PELAJAR (MENGGUNAKAN NO IC)
         document.getElementById('form-profil').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -424,17 +409,14 @@
             }
 
             try {
-                // Gunakan No. IC pelajar sebagai ID Dokumen tetap di Firebase
                 const docRef = doc(db, "pelajar", icInput);
                 
-                // setDoc bersama { merge: true } akan mengubah rekod sedia ada tanpa membuat data baru yang bertindih
                 await setDoc(docRef, {
                     namaPenuh: namaInput,
                     noIC: icInput,
                     tarikhKemaskini: new Date().toISOString()
                 }, { merge: true });
 
-                // Kemaskini ID sasaran rujukan dalam sistem
                 sasarID = icInput;
                 sessionStorage.setItem("pelajarIC", icInput);
                 sessionStorage.setItem("pelajarLogMasuk", namaInput);
@@ -449,7 +431,6 @@
         });
     </script>
 
-    <!-- INTERAKSI MOD EDIT ELEMEN DOM UI -->
     <script>
         function aktifkanModEdit() {
             document.getElementById('prof-nama').disabled = false;
