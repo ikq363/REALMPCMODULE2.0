@@ -67,7 +67,7 @@
         .header-top .badge-status.completed { background: #d1fae5; color: #059669; }
         .header-top .badge-status.waiting { background: #fef3c7; color: #d97706; }
 
-        /* MAIN CONTENT - FULL WIDTH */
+        /* MAIN CONTENT */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -483,6 +483,21 @@
             flex-wrap: wrap;
         }
 
+        /* LOADING */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             body { padding: 15px; }
@@ -528,7 +543,7 @@
             <div class="info-item">
                 <i class="fa-solid fa-chalkboard-user"></i>
                 <span class="label">Pengajar:</span>
-                <span id="nama-pengajar">Memuatkan...</span>
+                <span id="nama-pengajar"><span class="loading-spinner" style="width:16px;height:16px;"></span></span>
             </div>
             <div class="info-item">
                 <i class="fa-regular fa-clock"></i>
@@ -744,7 +759,7 @@
 
     <script type="module">
         import { initializeApp } from "firebase/app";
-        import { getFirestore, collection, query, where, onSnapshot, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+        import { getFirestore, collection, query, where, onSnapshot, doc, getDoc, setDoc } from "firebase/firestore";
 
         // ===================== FIREBASE CONFIG =====================
         const firebaseConfig = {
@@ -760,13 +775,23 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // ===================== AMBIL IC PENGAJAR DARI SESSION =====================
+        const pengajarIC = sessionStorage.getItem("pengajar_ic");
+        
+        // Jika tiada IC, redirect ke login
+        if (!pengajarIC) {
+            alert("Sesi anda telah tamat. Sila log masuk semula.");
+            window.location.href = "login-pengajar.html";
+        }
+
+        console.log("Pengajar IC dari session:", pengajarIC);
+
         // ===================== STATE =====================
         let currentStep = 0;
         let timerInterval = null;
         let timeLeft = 0;
         let isAktivitiActive = false;
         let selectedClass = null;
-        let pengajarIC = sessionStorage.getItem("pengajar_ic") || "881215085431";
         let pengajarNama = "";
         let pelajarList = [];
 
@@ -837,6 +862,7 @@
 
         // ===================== FUNGSI =====================
 
+        // 1. SET MASA DAN TARIKH LIVE
         function setMasaTarikh() {
             const now = new Date();
             const time = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -850,24 +876,30 @@
             }, 1000);
         }
 
+        // 2. LOAD PROFIL PENGAJAR DARI FIRESTORE
         async function loadPengajarProfile() {
             try {
                 const pengRef = doc(db, "pengajar", pengajarIC);
                 const pengSnap = await getDoc(pengRef);
+                
                 if (pengSnap.exists()) {
                     const data = pengSnap.data();
                     pengajarNama = data.namaPenuh || data.nama || "Pengajar";
                     namaPengajarEl.textContent = pengajarNama;
+                    console.log("Profil pengajar dimuatkan:", pengajarNama);
                 } else {
                     namaPengajarEl.textContent = "Pengajar REAL-MPC";
+                    console.warn("Tiada rekod pengajar untuk IC:", pengajarIC);
                 }
             } catch (error) {
-                console.error("Error loading teacher:", error);
+                console.error("Error loading teacher profile:", error);
                 namaPengajarEl.textContent = "Pengajar REAL-MPC";
             }
         }
 
+        // 3. LOAD KELAS PENGAJAR DARI FIRESTORE
         function loadKelasPengajar() {
+            // Query kelas di mana pengajarIC sama dengan IC pengajar yang login
             const kelasQuery = query(
                 collection(db, "kelas"),
                 where("pengajarIC", "==", pengajarIC)
@@ -876,6 +908,12 @@
             onSnapshot(kelasQuery, (snapshot) => {
                 selectKelas.innerHTML = '<option value="">-- Sila Pilih Kelas --</option>';
                 
+                if (snapshot.size === 0) {
+                    kelasStatus.textContent = "⚠️ Anda belum mencipta sebarang kelas";
+                    btnMula.disabled = true;
+                    return;
+                }
+
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     const kelasId = doc.id;
@@ -887,18 +925,15 @@
                     selectKelas.appendChild(option);
                 });
 
-                if (snapshot.size === 0) {
-                    kelasStatus.textContent = "⚠️ Anda belum mencipta sebarang kelas";
-                    btnMula.disabled = true;
-                } else {
-                    kelasStatus.textContent = `✅ ${snapshot.size} kelas ditemui`;
-                }
+                kelasStatus.textContent = `✅ ${snapshot.size} kelas ditemui`;
+                console.log(`✅ ${snapshot.size} kelas ditemui untuk pengajar`, pengajarIC);
             }, (error) => {
                 console.error("Error loading classes:", error);
                 kelasStatus.textContent = "❌ Gagal memuatkan kelas";
             });
         }
 
+        // 4. PILIH KELAS
         selectKelas.addEventListener('change', function() {
             selectedClass = this.value;
             if (selectedClass) {
@@ -913,6 +948,7 @@
             }
         });
 
+        // 5. LOAD PELAJAR DARI KELAS
         function loadPelajarKelas(kelasId) {
             const kelasRef = doc(db, "kelas", kelasId);
             
@@ -946,15 +982,22 @@
                     pelajarCard.classList.remove('hidden');
                     countPelajarTotal.innerText = pelajarList.length;
                     jumlahPelajarSesi.innerText = `Pelajar: ${pelajarList.length}`;
+                    console.log(`✅ ${pelajarList.length} pelajar dimuatkan dari kelas`, kelasId);
                 }
             }, (error) => {
                 console.error("Error loading class students:", error);
             });
         }
 
+        // 6. UPDATE SENARAI PELAJAR
         function updatePelajarList() {
             const container = document.getElementById('senarai-pelajar');
             container.innerHTML = '';
+            
+            if (pelajarList.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 20px;">Tiada pelajar dalam kelas ini.</p>';
+                return;
+            }
             
             pelajarList.forEach(p => {
                 const chip = document.createElement('div');
@@ -968,9 +1011,15 @@
             });
         }
 
+        // 7. MULA AKTIVITI
         function mulaAktiviti() {
             if (!selectedClass) {
                 alert('Sila pilih kelas terlebih dahulu.');
+                return;
+            }
+
+            if (pelajarList.length === 0) {
+                alert('Tiada pelajar dalam kelas ini. Sila tambah pelajar terlebih dahulu.');
                 return;
             }
 
@@ -992,6 +1041,7 @@
             }, 1000);
         }
 
+        // 8. UPDATE STATUS AKTIVITI DI FIRESTORE
         async function updateAktivitiStatus(status) {
             try {
                 const aktivitiRef = doc(db, "aktiviti", aktivitiData.id);
@@ -999,13 +1049,16 @@
                     status: status,
                     kelasId: selectedClass,
                     pengajarIC: pengajarIC,
+                    pengajarNama: pengajarNama,
                     updatedAt: new Date().toISOString()
                 }, { merge: true });
+                console.log("Status aktiviti dikemaskini:", status);
             } catch (error) {
                 console.error("Error updating activity status:", error);
             }
         }
 
+        // 9. RENDER STEP
         function renderStep(index) {
             const step = aktivitiData.steps[index];
             const totalSteps = aktivitiData.steps.length;
@@ -1052,6 +1105,7 @@
             }
         }
 
+        // 10. TIMER
         function startTimer(durasi) {
             clearInterval(timerInterval);
             timeLeft = durasi * 60;
@@ -1073,6 +1127,7 @@
             }, 1000);
         }
 
+        // 11. NEXT STEP
         function nextStep() {
             clearInterval(timerInterval);
             
@@ -1085,6 +1140,7 @@
             }
         }
 
+        // 12. TAMAT AKTIVITI
         function tamatAktiviti() {
             isAktivitiActive = false;
             clearInterval(timerInterval);
@@ -1101,6 +1157,7 @@
             dengarJawapanPelajar();
         }
 
+        // 13. DENGAR JAWAPAN PELAJAR
         function dengarJawapanPelajar() {
             const jawapanRef = collection(db, "aktiviti", aktivitiData.id, "jawapan");
             
@@ -1122,12 +1179,19 @@
                     if (data.markah !== undefined) markahData.push({ nama: data.namaPelajar || doc.id, markah: data.markah });
                 });
 
-                for (let i = 0; i <= 3; i++) document.getElementById(`q1_${i}`).textContent = counts.q1[i] || 0;
+                // Update Q1
+                for (let i = 0; i <= 3; i++) {
+                    document.getElementById(`q1_${i}`).textContent = counts.q1[i] || 0;
+                }
                 document.getElementById('jawapan-q1-total').textContent = totalJawapan;
 
-                for (let i = 0; i <= 2; i++) document.getElementById(`q2_${i}`).textContent = counts.q2[i] || 0;
+                // Update Q2
+                for (let i = 0; i <= 2; i++) {
+                    document.getElementById(`q2_${i}`).textContent = counts.q2[i] || 0;
+                }
                 document.getElementById('jawapan-q2-total').textContent = totalJawapan;
 
+                // Update Q3
                 const q3Container = document.getElementById('jawapan-q3');
                 if (q3Answers.length > 0) {
                     q3Container.innerHTML = q3Answers.map(a => 
@@ -1138,6 +1202,7 @@
                 }
                 document.getElementById('jawapan-q3-total').textContent = q3Answers.length;
 
+                // Update Q4
                 const q4Container = document.getElementById('jawapan-q4');
                 if (q4Answers.length > 0) {
                     q4Container.innerHTML = q4Answers.map(a => 
@@ -1148,6 +1213,7 @@
                 }
                 document.getElementById('jawapan-q4-total').textContent = q4Answers.length;
 
+                // Update Markah
                 const markahBody = document.getElementById('markah-table-body');
                 if (markahData.length > 0) {
                     markahBody.innerHTML = markahData.map((m, i) => `
@@ -1167,7 +1233,8 @@
                 }
                 document.getElementById('jawapan-markah-total').textContent = markahData.length;
 
-                if (markahData.length >= pelajarList.length && pelajarList.length > 0) {
+                // Auto complete when all students submitted
+                if (markahData.length >= pelajarList.length && pelajarList.length > 0 && markahData.length > 0) {
                     setTimeout(() => {
                         if (!document.getElementById('selesai-card').classList.contains('hidden')) return;
                         if (confirm('Semua pelajar telah menghantar refleksi. Tamatkan aktiviti?')) {
@@ -1184,6 +1251,7 @@
             });
         }
 
+        // 14. HENTI AKTIVITI
         function hentiAktiviti() {
             if (!isAktivitiActive) {
                 alert('Aktiviti tidak sedang berjalan.');
@@ -1206,47 +1274,59 @@
             }
         }
 
+        // 15. EXPORT DATA
         function exportData() {
             alert('Data telah dieksport ke console (F12).');
             console.log('=== DATA AKTIVITI ===');
-            console.log('Kelas:', selectedClass);
+            console.log('Pengajar:', pengajarNama, 'IC:', pengajarIC);
+            console.log('Kelas ID:', selectedClass);
             console.log('Pelajar:', pelajarList);
-            console.log('Jawapan:', 'Akan datang');
+            console.log('Jumlah Pelajar:', pelajarList.length);
+            console.log('Status:', statusBadge.textContent);
         }
 
         // ===================== EVENT LISTENERS =====================
         btnMula.addEventListener('click', mulaAktiviti);
+        
         btnSelesaiAwal.addEventListener('click', () => {
             if (confirm('Adakah anda pasti semua pelajar telah selesai?')) {
                 clearInterval(timerInterval);
                 nextStep();
             }
         });
+        
         btnNext.addEventListener('click', () => {
             if (confirm('Pastikan semua pelajar telah selesai langkah ini?')) {
                 clearInterval(timerInterval);
                 nextStep();
             }
         });
+        
         btnTamat.addEventListener('click', () => {
             if (confirm('Tamatkan aktiviti dan beralih ke refleksi?')) {
                 clearInterval(timerInterval);
                 tamatAktiviti();
             }
         });
+        
         btnHenti.addEventListener('click', hentiAktiviti);
         btnExport.addEventListener('click', exportData);
 
         // ===================== INIT =====================
+        console.log('=== Aktiviti 1: Keazaman Menakluk Persamaan ===');
+        console.log('Pengajar IC:', pengajarIC);
+        
         setMasaTarikh();
-        loadPengajarProfile();
+        await loadPengajarProfile();
         loadKelasPengajar();
 
-        // Check existing activity
+        // Check existing activity status
         const aktivitiRef = doc(db, "aktiviti", aktivitiData.id);
         onSnapshot(aktivitiRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                console.log('Status aktiviti sedia ada:', data.status);
+                
                 if (data.status === 'active' || data.status === 'refleksi') {
                     statusBadge.className = 'badge-status active';
                     statusBadge.innerHTML = '<i class="fa-solid fa-play"></i> Sedang Berjalan';
@@ -1263,13 +1343,15 @@
                             sesiCard.classList.add('hidden');
                             refleksiCard.classList.remove('hidden');
                             dengarJawapanPelajar();
+                            progressBar.style.width = '100%';
+                            countLangkah.innerText = '5/5 ✅';
                         }
                     }
                 }
             }
         });
 
-        console.log('Aktiviti 1: Keazaman Menakluk Persamaan - Halaman Pengajar sedia!');
+        console.log('✅ Aktiviti 1: Keazaman Menakluk Persamaan - Halaman Pengajar sedia!');
     </script>
 </body>
 </html>
