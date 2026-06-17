@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pelajar | REAL-MPC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --text-dark: #1e293b;
+            
+            /* Palet Warna Cerah & Mesra Murid */
+            --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5100 100%);
+            --grad-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --grad-indigo: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --grad-rose: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- SFERA CAHAYA LATAR BELAKANG --- */
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: -1;
+        }
+        .glow-1 { top: -50px; right: 10%; width: 350px; height: 350px; background: #06b6d4; }
+        .glow-2 { bottom: 50px; left: 30%; width: 300px; height: 300px; background: #6366f1; }
+
+        /* ==========================================================================
+           BAR SISI NAVIGASI PELAJAR (SIDEBAR)
+           ========================================================================== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-area h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .logo-area h2 span {
+            color: #06b6d4;
+        }
+
+        .logo-area p {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Hover Khas Warna Pelajar */
+        .menu-item.m-profile:hover { background: var(--grad-orange); color: white; box-shadow: 0 8px 20px rgba(255, 122, 0, 0.35); transform: translateX(8px); }
+        .menu-item.m-kelas:hover { background: var(--grad-cyan); color: white; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.35); transform: translateX(8px); }
+        .menu-item.m-modul:hover { background: var(--grad-indigo); color: white; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35); transform: translateX(8px); }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+
+        .logout-btn {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            cursor: pointer;
+        }
+        
+        .logout-btn:hover {
+            background: #f43f5e;
+            color: white !important;
+            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT AREA
+           ========================================================================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: var(--glass-bg);
+            padding: 25px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-msg h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .welcome-msg p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #06b6d4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+        }
+
+        /* ==========================================================================
+           KAD STATISTIK (1 KOTAK JUMLAH KELAS MURID)
+           ========================================================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 400px));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            padding: 35px;
+            border-radius: 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(6, 182, 212, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card-kelas { background: var(--grad-cyan); }
+
+        .stat-card i.bg-icon {
+            position: absolute;
+            right: -15px;
+            bottom: -15px;
+            font-size: 7.5rem;
+            opacity: 0.2;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .stat-card h2 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            margin: 15px 0 10px 0;
+        }
+
+        .stat-card span {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.25);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           RESPONSIVE CONFIGURATION
+           ========================================================================== */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%; min-height: auto; position: relative;
+                padding: 20px; border-radius: 0 0 24px 24px;
+            }
+            .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .main-content { width: 100%; margin-left: 0; padding: 20px; }
+            .top-bar { flex-direction: column; gap: 15px; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 500px) {
+            .menu-list { grid-template-columns: 1fr; display: grid; }
+            .menu-item { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <nav class="sidebar">
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Portal Pelajar</p>
+        </div>
+
+        <div class="menu-list">
+            <a href="profile-pelajar.html" class="menu-item m-profile">
+                <i class="fa-solid fa-user-graduate"></i> Profile Saya
+            </a>
+            <a href="kelas-pelajar.html" class="menu-item m-kelas">
+                <i class="fa-solid fa-school"></i> Kelas Saya
+            </a>
+            <a href="modul-pelajar.html" class="menu-item m-modul">
+                <i class="fa-solid fa-book-open"></i> Modul Pembelajaran
+            </a>
+        </div>
+
+        <a onclick="logoutAkaun()" class="menu-item logout-btn" style="margin-top: 20px;">
+            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
+    </nav>
+
+    <main class="main-content">
+        
+        <header class="top-bar">
+            <div class="welcome-msg">
+                <h1 id="paparan-nama-pelajar">Memuatkan...</h1>
+                <p>Selamat datang! Sedia untuk meneroka ilmu baharu hari ini?</p>
+            </div>
+            <div class="user-profile-badge">
+                <i class="fa-solid fa-star"></i> AKUN PELAJAR
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            
+            <div class="stat-card stat-card-kelas">
+                <i class="fa-solid fa-school bg-icon"></i>
+                <p>Jumlah Kelas Disertai</p>
+                <h2 id="total-kelas-pelajar">...</h2>
+                <span><i class="fa-solid fa-circle-check"></i> Status Terkini</span>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Firebase REAL-MPC anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- 1. AMBIL NAMA PELAJAR DARI SESSION ---
+        // Sila pastikan sistem login pelajar anda menetapkan sessionStorage key "pelajarLogMasuk"
+        const namaPelajar = sessionStorage.getItem("pelajarLogMasuk");
+        if (namaPelajar) {
+            document.getElementById('paparan-nama-pelajar').innerText = "Hai, " + namaPelajar + "!";
+        } else {
+            document.getElementById('paparan-nama-pelajar').innerText = "Selamat Datang, Pelajar!";
+        }
+
+        // --- 2. KIRA JUMLAH KELAS SECARA LIVE ---
+        // Mengambil jumlah keseluruhan rekod dalam collection "kelas"
+        onSnapshot(collection(db, "kelas"), (snapshot) => {
+            document.getElementById('total-kelas-pelajar').innerText = snapshot.size;
+        }, (error) => {
+            console.error("Ralat semak kelas pelajar:", error);
+            document.getElementById('total-kelas-pelajar').innerText = "0";
+        });
+    </script>
+
+    <script>
+        function logoutAkaun() {
+            if(confirm("Adakah anda pasti untuk log keluar daripada akaun pelajar?")) {
+                sessionStorage.clear();
+                window.location.href = "login-pelajar.html"; // Hala balik ke halaman login pelajar anda
+            }
+        }
+    </script>
+
+</body>
+</html>
