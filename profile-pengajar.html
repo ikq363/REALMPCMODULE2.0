@@ -6,7 +6,7 @@
     <title>Profil Pengajar | REAL-MPC</title>
     
     <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght Benefic;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -87,9 +87,6 @@
 
         .menu-item.active { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
         .menu-item.m-profile:hover { background: var(--grad-pink); color: white; transform: translateX(8px); }
-        .menu-item.m-kelas:hover { background: var(--grad-blue); color: white; transform: translateX(8px); }
-        .menu-item.m-modul:hover { background: var(--grad-purple); color: white; transform: translateX(8px); }
-        .menu-item.m-analisis:hover { background: var(--grad-emerald); color: white; transform: translateX(8px); }
         .menu-item i { font-size: 1.2rem; width: 25px; }
 
         .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); cursor: pointer; }
@@ -125,7 +122,6 @@
             gap: 30px;
         }
 
-        /* Avatar Card */
         .avatar-card {
             background: white;
             border-radius: 24px;
@@ -157,7 +153,6 @@
         .avatar-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; word-break: break-word; }
         .avatar-card p { font-size: 0.85rem; color: white; background: var(--primary); padding: 4px 14px; border-radius: 100px; font-weight: 700; text-transform: uppercase; }
 
-        /* Details Card Form */
         .details-card {
             background: white;
             border-radius: 24px;
@@ -210,7 +205,6 @@
             outline: none;
         }
 
-        /* Gaya semasa mod edit diaktifkan */
         .input-wrapper input:not([disabled]) {
             background-color: #fff;
             border-color: var(--accent-orange);
@@ -222,7 +216,6 @@
             margin-top: 2px;
         }
 
-        /* --- ACTION BUTTONS --- */
         .btn-container {
             margin-top: 32px;
             display: flex;
@@ -251,7 +244,6 @@
         .btn-cancel { background: #e2e8f0; color: var(--text-dark); display: none; }
         .btn-cancel:hover { background: #cbd5e1; }
 
-        /* Responsif */
         @media (max-width: 992px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; min-height: auto; position: relative; padding: 20px; border-radius: 0 0 24px 24px; }
@@ -277,13 +269,13 @@
             <a href="profile-pengajar.html" class="menu-item m-profile active">
                 <i class="fa-solid fa-id-card-clip"></i> Profile
             </a>
-            <a href="kelas-pengajar.html" class="menu-item m-kelas">
+            <a href="kelas-pengajar.html" class="menu-item m-kelas" style="color: rgba(255,255,255,0.7);">
                 <i class="fa-solid fa-school"></i> Kelas Saya
             </a>
-            <a href="modul-pengajar.html" class="menu-item m-modul">
+            <a href="modul-pengajar.html" class="menu-item m-modul" style="color: rgba(255,255,255,0.7);">
                 <i class="fa-solid fa-book-open-reader"></i> Modul
             </a>
-            <a href="analisis-pengajar.html" class="menu-item m-analisis">
+            <a href="analisis-pengajar.html" class="menu-item m-analisis" style="color: rgba(255,255,255,0.7);">
                 <i class="fa-solid fa-chart-pie"></i> Analisis
             </a>
         </div>
@@ -295,17 +287,15 @@
 
     <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
-        
         <header class="top-bar">
             <div class="welcome-msg">
                 <h1>Profil Pengajar</h1>
-                <p>Urus dan kemas kini maklumat nama serta nombor kad pengenalan anda di sini.</p>
+                <p>Uruskan maklumat akaun pendaftaran anda di sini.</p>
             </div>
         </header>
 
         <section class="profile-container">
-            
-            <!-- Kad Kiri: Ringkasan Foto/Nama -->
+            <!-- Kad Kiri: Paparan Nama -->
             <div class="avatar-card">
                 <div class="avatar-box">
                     <i class="fa-solid fa-user-tie"></i>
@@ -314,11 +304,10 @@
                 <p>Pengajar</p>
             </div>
 
-            <!-- Kad Kanan: Borang Butiran Maklumat -->
+            <!-- Kad Kanan: Form Paparan/Kemas Kini -->
             <div class="details-card">
                 <form id="form-profil">
                     <div class="form-grid">
-                        
                         <div class="form-group">
                             <label>Nama Penuh Pengajar</label>
                             <div class="input-wrapper">
@@ -332,42 +321,30 @@
                             <label>No. Kad Pengenalan</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="text" id="prof-ic" maxlength="12" disabled required autocomplete="off">
+                                <input type="text" id="prof-ic" disabled required autocomplete="off">
                             </div>
-                            <span class="input-tip">*12 digit nombor sahaja (tanpa -)</span>
                         </div>
-
                     </div>
 
-                    <!-- Butang Kawalan Am -->
                     <div class="btn-container">
                         <button type="button" id="btn-ubah" class="btn btn-edit" onclick="aktifkanModEdit()">
                             <i class="fa-solid fa-user-pen"></i> Kemaskini Profil
                         </button>
-                        
-                        <button type="button" id="btn-batal" class="btn btn-cancel" onclick="matikanModEdit()">
-                            Batal
-                        </button>
-                        
+                        <button type="button" id="btn-batal" class="btn btn-cancel" onclick="matikanModEdit()">Batal</button>
                         <button type="submit" id="btn-simpan" class="btn btn-save">
                             <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
                         </button>
                     </div>
                 </form>
             </div>
-
         </section>
-
     </main>
 
-    <!-- ==========================================================================
-         FIREBASE SDK & LOGIK PROFIL
-         ========================================================================== -->
+    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase REAL-MPC
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
             authDomain: "real-mpc-module-6be02.firebaseapp.com",
@@ -381,87 +358,76 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ambil nama pengajar semasa dari Session
+        // Ambil ID No. IC yang disimpan semasa cikgu mula-mula log masuk
+        let icCikguSession = sessionStorage.getItem("pengajarIC");
         let namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
 
-        if (!namaCikguSession) {
-            alert("Akses ditolak. Sila log masuk terlebih dahulu.");
+        // Jika data tiada dalam session, bermakna belum log masuk
+        if (!icCikguSession) {
+            alert("Akses ditolak. Sila log masuk semula.");
             window.location.href = "login-pengajar.html";
         }
 
-        // Filter Input Automatik semasa menaip
+        // Auto-format huruf besar semasa mengedit nama
         document.getElementById('prof-nama').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
         });
-        document.getElementById('prof-ic').addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
 
-        // Panggil data profil dari Firestore
-        async function dapatkanProfilCikgu() {
+        // AMBIL DATA REKOD ASAL DARI FIREBASE (Berdasarkan ID No. IC)
+        async function ambilDataAsal() {
             try {
-                const docRef = doc(db, "pengajar", namaCikguSession);
+                const docRef = doc(db, "pengajar", icCikguSession);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    document.getElementById('side-nama').innerText = data.namaPenuh || namaCikguSession;
-                    document.getElementById('prof-nama').value = data.namaPenuh || namaCikguSession;
-                    document.getElementById('prof-ic').value = data.noIC || '';
+                    
+                    // Paparkan data pendaftaran asal ke skrin
+                    document.getElementById('side-nama').innerText = data.namaPenuh;
+                    document.getElementById('prof-nama').value = data.namaPenuh;
+                    document.getElementById('prof-ic').value = data.noIC;
                 } else {
+                    // Jika data tiada dalam koleksi IC, guna data back-up dari session pendaftaran awal
                     document.getElementById('side-nama').innerText = namaCikguSession;
                     document.getElementById('prof-nama').value = namaCikguSession;
+                    document.getElementById('prof-ic').value = icCikguSession;
                 }
             } catch (error) {
-                console.error("Ralat memuatkan profil:", error);
+                console.error("Ralat membaca data:", error);
             }
         }
 
-        dapatkanProfilCikgu();
+        // Jalankan fungsi bacaan data pendaftaran awal
+        ambilDataAsal();
 
-        // PROSES SIMPAN PERUBAHAN DATA PROFIL
+        // KEMAS KINI DOKUMEN YANG SAMA (TIDAK AKAN MENINDIH ATAU MEMBUAT DATA BARU)
         document.getElementById('form-profil').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const namaBaru = document.getElementById('prof-nama').value.trim();
-            const icBaru = document.getElementById('prof-ic').value.trim();
-
-            if(icBaru.length !== 12) {
-                alert('Ralat: Sila pastikan No. IC mengandungi tepat 12 digit nombor.');
-                return;
-            }
+            const namaTerkini = document.getElementById('prof-nama').value.trim();
+            const icTerkini = document.getElementById('prof-ic').value.trim();
 
             try {
-                // Jika nama berubah, kita perlu cipta dokumen baru di bawah key nama baru (kerana nama ialah Document ID)
-                if (namaBaru !== namaCikguSession) {
-                    // Simpan data di dokumen baru
-                    await setDoc(doc(db, "pengajar", namaBaru), {
-                        namaPenuh: namaBaru,
-                        noIC: icBaru,
-                        tarikhKemaskini: new Date().toISOString()
-                    });
-                    
-                    // Padam dokumen lama jika nama telah bertukar
-                    await deleteDoc(doc(db, "pengajar", namaCikguSession));
-                    
-                    // Kemas kini session browser dengan nama baru
-                    sessionStorage.setItem("pengajarLogMasuk", namaBaru);
-                    namaCikguSession = namaBaru;
-                } else {
-                    // Jika nama kekal sama, terus kemas kini data sedia ada
-                    await setDoc(doc(db, "pengajar", namaCikguSession), {
-                        namaPenuh: namaCikguSession,
-                        noIC: icBaru,
-                        tarikhKemaskini: new Date().toISOString()
-                    }, { merge: true });
-                }
+                const docRef = doc(db, "pengajar", icCikguSession);
+                
+                // Gunakan updateDoc untuk mengubah nilai field di dalam dokumen yang SAMA sahaja
+                await updateDoc(docRef, {
+                    namaPenuh: namaTerkini,
+                    noIC: icTerkini,
+                    tarikhKemaskini: new Date().toISOString()
+                });
 
-                alert("Profil berjaya dikemas kini!");
+                // Kemaskini memori session browser dengan maklumat terkini
+                sessionStorage.setItem("pengajarLogMasuk", namaTerkini);
+                sessionStorage.setItem("pengajarIC", icTerkini);
+                icCikguSession = icTerkini; 
+
+                alert("Profil anda berjaya dikemas kini!");
                 matikanModEdit();
-                dapatkanProfilCikgu(); 
+                ambilDataAsal(); // Refresh paparan tanpa muat semula halaman
             } catch (error) {
-                console.error("Ralat menyimpan data profil:", error);
-                alert("Gagal menyimpan perubahan. Sila cuba lagi.");
+                console.error("Ralat kemas kini dokumen:", error);
+                alert("Gagal mengemas kini data. Sila cuba lagi.");
             }
         });
     </script>
@@ -469,29 +435,27 @@
     <!-- INTERAKSI MOD EDIT ELEMEN DOM UI -->
     <script>
         function aktifkanModEdit() {
-            // Aktifkan input Nama dan IC untuk proses edit
+            // Membuka kunci edit untuk kedua-dua medan pendaftaran
             document.getElementById('prof-nama').disabled = false;
             document.getElementById('prof-ic').disabled = false;
 
-            // Tukar paparan butang kawalan
             document.getElementById('btn-ubah').style.display = 'none';
             document.getElementById('btn-batal').style.display = 'block';
             document.getElementById('btn-simpan').style.display = 'block';
         }
 
         function matikanModEdit() {
-            // Kunci semula input medan
+            // Mengunci semula semua medan ke fungsi read-only
             document.getElementById('prof-nama').disabled = true;
             document.getElementById('prof-ic').disabled = true;
 
-            // Kembalikan paparan butang asal
             document.getElementById('btn-ubah').style.display = 'block';
             document.getElementById('btn-batal').style.display = 'none';
             document.getElementById('btn-simpan').style.display = 'none';
         }
 
         function logoutAkaun() {
-            if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
+            if(confirm("Adakah anda pasti untuk log keluar?")) {
                 sessionStorage.clear();
                 window.location.href = "login-pengajar.html";
             }
