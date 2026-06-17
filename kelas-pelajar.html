@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelas Saya | REAL-MPC Pelajar</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -115,7 +114,6 @@
 </head>
 <body>
 
-    <!-- ================= BAR SISI NAVIGASI PELAJAR ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -132,7 +130,6 @@
         </a>
     </nav>
 
-    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         <header class="top-bar">
             <div class="welcome-msg">
@@ -141,7 +138,6 @@
         </header>
 
         <section class="content-grid">
-            <!-- KAD KIRI: ENTER CODE BOX -->
             <div class="card">
                 <div class="card-title"><i class="fa-solid fa-key" style="color:var(--accent-blue)"></i>Sertai Kelas Baharu</div>
                 <form id="form-join-kod">
@@ -153,7 +149,6 @@
                 </form>
             </div>
 
-            <!-- KAD KANAN: GALLERY VIEW KELAS YANG TELAH DISERTAI -->
             <div>
                 <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-table-cells-large" style="color:var(--accent-blue)"></i> Senarai Kelas Anda
@@ -166,7 +161,6 @@
         </section>
     </main>
 
-    <!-- ================= MODAL DETAIL KELAS (READ ONLY POPUP) ================= -->
     <div class="modal" id="modal-detail-kelas">
         <div class="modal-content">
             <div class="modal-header">
@@ -175,7 +169,6 @@
             </div>
             <div class="modal-body">
                 
-                <!-- Maklumat Detail Ringkas -->
                 <div class="meta-detail-box">
                     <div class="meta-item">
                         <span class="meta-label">Subjek</span>
@@ -187,20 +180,17 @@
                     </div>
                 </div>
 
-                <!-- Senarai Rakan Sekelas yang dah join -->
                 <div class="section-title"><i class="fa-solid fa-user-group"></i> Rakan Sekelas Berdaftar</div>
                 <ul class="student-list" id="md-senarai-rakan">
-                    <!-- Senarai nama diisi menggunakan JS -->
-                </ul>
+                    </ul>
 
             </div>
         </div>
     </div>
 
-    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
@@ -215,18 +205,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Simulasi ID Pelajar Aktif daripada Session Storage (Gunakan No IC Pelajar yang login)
-        // Jika tiada session, letak default dummy IC untuk ujian (Sila tukar dengan pengurusan login anda)
+        // Pastikan No IC pelajar diambil daripada Session Storage
         if (!sessionStorage.getItem("pelajar_ic")) {
             sessionStorage.setItem("pelajar_ic", "081215085431"); 
         }
         const icPelajarSemasa = sessionStorage.getItem("pelajar_ic");
 
-        // 1. FUNGSI: AMBIL & PAPARKAN KELAS YANG ADA NAMA PELAJAR INI SAHAJA (GALLERY VIEW)
-        async function dapatkanKelasSaya() {
+        // 1. REAL-TIME LISTENER: PANGGIL DATA SECARA SEGERA JIKA ADA PERUBAHAN DB
+        function dengarKelasSaya() {
             const galeriBox = document.getElementById('galeri-kelas-pelajar');
-            try {
-                const querySnapshot = await getDocs(collection(db, "kelas"));
+            
+            // Guna onSnapshot untuk sync automatik tanpa refresh page
+            onSnapshot(collection(db, "kelas"), (querySnapshot) => {
                 galeriBox.innerHTML = '';
                 let adaKelas = false;
 
@@ -235,7 +225,6 @@
                     const kod = doc.id;
                     const senaraiPelajar = data.senaraiPelajar || [];
 
-                    // Semak jika IC pelajar semasa ada di dalam array senaraiPelajar kelas tersebut
                     if (senaraiPelajar.includes(icPelajarSemasa)) {
                         adaKelas = true;
                         
@@ -251,7 +240,7 @@
                                 <div class="teacher-info">
                                     <i class="fa-solid fa-chalkboard-user"></i> Pengajar REAL-MPC
                                 </div>
-                                <button class="btn-view-class" onclick="lihatDetailKelas('${kod}')">
+                                <button class="btn-view-class" data-kod="${kod}">
                                     <i class="fa-solid fa-folder-open"></i> Lihat Kelas
                                 </button>
                             </div>
@@ -264,16 +253,24 @@
                     galeriBox.innerHTML = '<div class="gallery-empty">Anda belum menyertai mana-mana kelas. Masukkan kod kelas di menu sebelah kiri untuk mula belajar!</div>';
                 }
 
-            } catch (error) {
-                console.error("Ralat muat kelas pelajar:", error);
-                galeriBox.innerHTML = '<div class="gallery-empty">Gagal memuatkan senarai bilik darjah.</div>';
-            }
+                // Selesaikan isu modular onclick dengan Event Listener Event Delegation
+                document.querySelectorAll('.btn-view-class').forEach(button => {
+                    button.onclick = function() {
+                        const kodKelas = this.getAttribute('data-kod');
+                        lihatDetailKelas(kodKelas);
+                    };
+                });
+
+            }, (error) => {
+                console.error("Ralat sistem onSnapshot:", error);
+                galeriBox.innerHTML = '<div class="gallery-empty">Gagal memuatkan senarai bilik darjah akibat ralat talian.</div>';
+            });
         }
 
-        // Jalankan fungsi pameran semasa mula masuk page
-        dapatkanKelasSaya();
+        // Jalankan sistem pemantauan real-time
+        dengarKelasSaya();
 
-        // 2. FUNGSI: LOGIK MANUAL SUBMIT ENTER CODE UNTUK SERTAI KELAS
+        // 2. FUNGSI LOGIK MANUAL KOD SUBMIT
         document.getElementById('form-join-kod').addEventListener('submit', async (e) => {
             e.preventDefault();
             const inputKod = document.getElementById('input-kod-kelas').value.trim().toUpperCase();
@@ -288,27 +285,20 @@
             btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyertai...`;
 
             try {
-                // Cari dokumen kelas berdasarkan kod yang dimasukkan
                 const kelasRef = doc(db, "kelas", inputKod);
                 const kelasSnap = await getDoc(kelasRef);
 
                 if (!kelasSnap.exists()) {
                     alert("Kod kelas tidak ditemui! Sila semak semula kod yang diberikan oleh pengajar anda.");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas`;
                     return;
                 }
 
-                // Masukkan IC pelajar ke dalam rekod kelas tersebut
                 await updateDoc(kelasRef, {
                     senaraiPelajar: arrayUnion(icPelajarSemasa)
                 });
 
                 alert(`Berjaya! Anda telah dimasukkan ke dalam kelas "${kelasSnap.data().namaKelas}" secara rasmi.`);
                 document.getElementById('form-join-kod').reset();
-                
-                // Segarkan semula Gallery View kelas
-                dapatkanKelasSaya();
 
             } catch (error) {
                 console.error("Ralat sertai kod manual:", error);
@@ -319,12 +309,12 @@
             }
         });
 
-        // 3. FUNGSI: PAPAR DETAIL KELAS DALAM BENTUK POPUP WINDOW (READ-ONLY)
-        window.lihatDetailKelas = async function(kodKelas) {
+        // 3. FUNGSI DETAIL WINDOW (DITUKAR KEPADA SKOP UTAMA MODUL)
+        async function lihatDetailKelas(kodKelas) {
             document.getElementById('modal-detail-kelas').style.display = 'flex';
             
             const listRakan = document.getElementById('md-senarai-rakan');
-            listRakan.innerHTML = '<li style="text-align:center; padding:10px; color:var(--text-muted); font-weight:600;">Mengambil maklumat profil kelas...</li>';
+            listRakan.innerHTML = '<li style="text-align:center; padding:10px; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil maklumat profil kelas...</li>';
 
             try {
                 const docRef = doc(db, "kelas", kodKelas);
@@ -333,12 +323,10 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Set Data Atas Modal
                     document.getElementById('md-nama-kelas').innerText = data.namaKelas;
                     document.getElementById('md-subjek').innerText = data.subjek;
                     document.getElementById('md-kod').innerText = kodKelas;
 
-                    // Ambil senarai pelajar & tukar IC kepada nama asal
                     const arrPelajar = data.senaraiPelajar || [];
                     listRakan.innerHTML = '';
 
@@ -346,7 +334,7 @@
                         for(let ic of arrPelajar) {
                             const pelRef = doc(db, "pelajar", ic);
                             const pelSnap = await getDoc(pelRef);
-                            let namaPapar = ic; // Default kalau nama tak jumpa
+                            let namaPapar = ic; 
 
                             if(pelSnap.exists()) {
                                 namaPapar = pelSnap.data().namaPenuh || pelSnap.data().nama || ic;
@@ -354,7 +342,6 @@
 
                             let li = document.createElement('li');
                             li.className = 'student-item';
-                            // Bezakan tag jika itu adalah akaun diri sendiri
                             if(ic === icPelajarSemasa) {
                                 li.innerHTML = `<i class="fa-solid fa-circle-user" style="color:#2563eb"></i> <span>${namaPapar} <strong>(Anda)</strong></span>`;
                                 li.style.background = "#f0fdf4";
@@ -374,7 +361,6 @@
         }
     </script>
 
-    <!-- FUNGSI UTALITI UNTUK POPUP CLOSING -->
     <script>
         function tutupModal() {
             document.getElementById('modal-detail-kelas').style.display = 'none';
