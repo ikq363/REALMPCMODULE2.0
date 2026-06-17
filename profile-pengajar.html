@@ -287,7 +287,7 @@
         <header class="top-bar">
             <div class="welcome-msg">
                 <h1>Profil Pengajar</h1>
-                <p>Paparan maklumat profil rasmi anda yang telah didaftarkan.</p>
+                <p>Urusan bacaan dan kemas kini terus profil pendaftaran anda.</p>
             </div>
         </header>
 
@@ -296,8 +296,8 @@
                 <div class="avatar-box">
                     <i class="fa-solid fa-user-tie"></i>
                 </div>
-                <h3 id="side-nama">Memuatkan...</h3>
-                <p>Pengajar</p>
+                <h3 id="side-nama">Pengajar</h3>
+                <p>Status Aktif</p>
             </div>
 
             <div class="details-card">
@@ -307,7 +307,7 @@
                             <label>Nama Penuh Pengajar</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-user"></i>
-                                <input type="text" id="prof-nama" disabled required autocomplete="off">
+                                <input type="text" id="prof-nama" disabled required autocomplete="off" placeholder="Masukkan nama penuh">
                             </div>
                             <span class="input-tip">*Ditukar ke HURUF BESAR automatik</span>
                         </div>
@@ -316,8 +316,9 @@
                             <label>No. Kad Pengenalan</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="text" id="prof-ic" disabled required autocomplete="off">
+                                <input type="text" id="prof-ic" disabled required autocomplete="off" placeholder="Masukkan 12 digit No. IC">
                             </div>
+                            <span class="input-tip">*ID Unik Utama Dokumen (12 digit tanpa '-')</span>
                         </div>
                     </div>
 
@@ -337,7 +338,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
@@ -352,78 +353,96 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ambil data dari session storage (Sistem terima apa-apa sahaja rujukan login sedia ada)
-        let namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
-        let icCikguSession = sessionStorage.getItem("pengajarIC");
+        // Cari ID sasaran secara dinamik (Guna IC atau Nama daripada session jika ada)
+        let sasarID = sessionStorage.getItem("pengajarIC") || sessionStorage.getItem("pengajarLogMasuk") || "";
 
-        // Jika dua-dua tiada, barulah dikira belum login langsung
-        if (!namaCikguSession && !icCikguSession) {
-            alert("Sila log masuk terlebih dahulu.");
-            window.location.href = "login-pengajar.html";
-        }
-
-        // Tentukan ID Dokumen yang akan dipanggil (Guna IC jika ada, jika tiada guna Nama)
-        let documentID = icCikguSession ? icCikguSession : namaCikguSession;
-
-        // Auto-format huruf besar semasa mengedit nama
+        // Auto-format huruf besar semasa menaip nama
         document.getElementById('prof-nama').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
         });
+        
+        // Auto-remove tanda sengkang (-) pada input IC
+        document.getElementById('prof-ic').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
 
-        // AMBIL REKOD DATA ASAL DARI FIREBASE MASA DAFTAR MULA-MULA
-        async function ambilDataAsal() {
+        // FUNGSI UTAMA: AMBIL DATA TERDAFTAR DARI FIREBASE
+        async function ambilDataProfil() {
             try {
-                const docRef = doc(db, "pengajar", documentID);
-                const docSnap = await getDoc(docRef);
+                // Skenario A: Jika ada maklumat ID dalam session, tarik dokumen itu
+                if (sasarID) {
+                    const docRef = doc(db, "pengajar", sasarID);
+                    const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    // Masukkan data pendaftaran asal yang betul ke dalam input text
-                    document.getElementById('side-nama').innerText = data.namaPenuh || data.nama || documentID;
-                    document.getElementById('prof-nama').value = data.namaPenuh || data.nama || documentID;
-                    document.getElementById('prof-ic').value = data.noIC || data.ic || '';
+                    if (docSnap.exists()) {
+                        paparkanKeSkrin(docSnap.data());
+                        return;
+                    }
+                }
+
+                // Skenario B: Jika session kosong/hilang, cuba scan koleksi 'pengajar' untuk data paling atas
+                const q = query(collection(db, "pengajar"), limit(1));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        sasarID = doc.id; // Set ID aktif baru
+                        paparkanKeSkrin(doc.data());
+                    });
                 } else {
-                    // Backup jika tiada dokumen padanan langsung dalam database
-                    document.getElementById('side-nama').innerText = namaCikguSession || "PENGANJAR";
-                    document.getElementById('prof-nama').value = namaCikguSession || "";
-                    document.getElementById('prof-ic').value = icCikguSession || "";
+                    // Skenario C: Database kosong sepenuhnya (Pendaftaran Baru Pertama Kali)
+                    document.getElementById('side-nama').innerText = "Profil Baru";
                 }
             } catch (error) {
-                console.error("Ralat membaca data Firebase:", error);
+                console.error("Ralat memuatkan Firestore:", error);
             }
         }
 
-        // Jalankan fungsi
-        ambilDataAsal();
+        function paparkanKeSkrin(data) {
+            const namaPaparan = data.namaPenuh || data.nama || "PENGANJAR";
+            const icPaparan = data.noIC || data.ic || sasarID;
 
-        // SIMPAN PERUBAHAN SECARA TERUS KEPADA DOKUMEN ASAL (TIADA DOUBLE DATA)
+            document.getElementById('side-nama').innerText = namaPaparan;
+            document.getElementById('prof-nama').value = namaPaparan;
+            document.getElementById('prof-ic').value = icPaparan;
+        }
+
+        // Jalankan fungsi bacaan data sebaik page dibuka
+        ambilDataProfil();
+
+        // FUNGSI UTAMA: SIMPAN & EDIT DATA TERUS KEPADA DOKUMEN ASAL
         document.getElementById('form-profil').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const namaTerkini = document.getElementById('prof-nama').value.trim();
-            const icTerkini = document.getElementById('prof-ic').value.trim();
+            const namaInput = document.getElementById('prof-nama').value.trim();
+            const icInput = document.getElementById('prof-ic').value.trim();
+
+            if (icInput.length < 5) {
+                alert("Sila masukkan No. Kad Pengenalan yang sah.");
+                return;
+            }
 
             try {
-                const docRef = doc(db, "pengajar", documentID);
+                // Sentiasa gunakan No. IC input sebagai Document ID kekal untuk elak data double
+                const docRef = doc(db, "pengajar", icInput);
                 
-                // updateDoc dijamin akan mengubah suai rekod sedia ada sahaja
-                await updateDoc(docRef, {
-                    namaPenuh: namaTerkini,
-                    noIC: icTerkini,
+                await setDoc(docRef, {
+                    namaPenuh: namaInput,
+                    noIC: icInput,
                     tarikhKemaskini: new Date().toISOString()
-                });
+                }, { merge: true });
 
-                // Kemaskini memori session secara selamat
-                if(sessionStorage.getItem("pengajarLogMasuk")) sessionStorage.setItem("pengajarLogMasuk", namaTerkini);
-                if(sessionStorage.getItem("pengajarIC")) sessionStorage.setItem("pengajarIC", icTerkini);
+                // Kemaskini ID sasaran rujukan
+                sasarID = icInput;
+                sessionStorage.setItem("pengajarIC", icInput);
+                sessionStorage.setItem("pengajarLogMasuk", namaInput);
 
-                alert("Profil anda berjaya dikemas kini!");
+                alert("Profil berjaya disimpan!");
                 matikanModEdit();
-                ambilDataAsal(); // Segarkan data pada paparan screen
+                ambilDataProfil(); 
             } catch (error) {
-                console.error("Ralat kemas kini dokumen:", error);
-                alert("Gagal menyimpan. Pastikan internet stabil dan cuba lagi.");
+                console.error("Ralat menyimpan data:", error);
+                alert("Gagal menyimpan perubahan. Sila cuba lagi.");
             }
         });
     </script>
@@ -448,7 +467,7 @@
         }
 
         function logoutAkaun() {
-            if(confirm("Adakah anda pasti untuk log keluar?")) {
+            if(confirm("Adakah anda pasti untuk keluar?")) {
                 sessionStorage.clear();
                 window.location.href = "login-pengajar.html";
             }
