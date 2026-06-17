@@ -16,6 +16,7 @@
             --text-muted: #64748b;
             --grad-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            --grad-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
@@ -88,11 +89,12 @@
         .btn { width: 100%; padding: 14px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary { background: var(--grad-blue); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* ================= GALLERY VIEW SYSTEM ================= */
         .gallery-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
         
-        .class-box { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.01); }
+        .class-box { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.01); position: relative; }
         .class-box:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(15, 23, 42, 0.04); border-color: #cbd5e1; }
         
         .class-header { margin-bottom: 15px; }
@@ -100,10 +102,13 @@
         .class-box h3 { font-size: 1.3rem; font-weight: 800; color: var(--primary); line-height: 1.2; margin-bottom: 6px; }
         .class-subjek { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
         
-        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
+        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; flex-wrap: wrap; gap: 10px; }
         .teacher-info { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .class-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
         .btn-view-class:hover { background: #1e293b; }
+        .btn-leave-class { background: var(--grad-red); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .btn-leave-class:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 
         .gallery-empty { text-align: center; color: var(--text-muted); padding: 60px 0; font-weight: 600; grid-column: 1/-1; }
 
@@ -123,12 +128,14 @@
         .meta-item { display: flex; flex-direction: column; gap: 4px; }
         .meta-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .meta-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+        .meta-value.teacher { color: #7c3aed; }
 
         .section-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
         
         .student-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
         .student-item { background: #fff; padding: 12px 16px; border: 1px solid #f1f5f9; border-radius: 12px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 10px; color: #334155; }
         .student-item i { color: #10b981; font-size: 0.85rem; }
+        .student-item.current-user { background: #f0fdf4; border-color: #86efac; }
 
         @media (max-width: 992px) {
             body { flex-direction: column; }
@@ -216,6 +223,10 @@
                         <span class="meta-label">Kod Kelas</span>
                         <span class="meta-value" id="md-kod" style="color:#2563eb">-----</span>
                     </div>
+                    <div class="meta-item" style="grid-column: 1/-1;">
+                        <span class="meta-label">Pengajar</span>
+                        <span class="meta-value teacher" id="md-pengajar"><i class="fa-solid fa-chalkboard-user"></i> Memuatkan...</span>
+                    </div>
                 </div>
 
                 <div class="section-title"><i class="fa-solid fa-user-group"></i> Rakan Sekelas Berdaftar</div>
@@ -226,9 +237,18 @@
         </div>
     </div>
 
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, onSnapshot } from "firebase/firestore";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
@@ -243,18 +263,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // BOX POPUP UNTUK TESTING UTK PILIH IC AKUN MANA NAK TENGOK
-        if (!sessionStorage.getItem("pelajar_ic")) {
-            let icTest = prompt("Sila masukkan No. IC Pelajar untuk simulasi login (Pastikan IC wujud di DB koleksi 'pelajar'):", "081215085431");
-            if (icTest && icTest.trim() !== "") {
-                sessionStorage.setItem("pelajar_ic", icTest.trim());
-            } else {
-                sessionStorage.setItem("pelajar_ic", "081215085431"); 
-            }
-        }
-        const icPelajarSemasa = sessionStorage.getItem("pelajar_ic");
+        // Get student IC from session storage
+        const icPelajarSemasa = sessionStorage.getItem("pelajar_ic") || "081215085431";
+        let namaPelajarSemasa = "";
 
-        // FUNGSI BARU: Ambil maklumat profil diri sendiri daripada DB dan letak pada Header Top Bar
+        // FUNGSI: Ambil maklumat profil diri sendiri daripada DB dan letak pada Header Top Bar
         async function muatProfilHeader() {
             try {
                 const pelRef = doc(db, "pelajar", icPelajarSemasa);
@@ -262,8 +275,8 @@
                 
                 if (pelSnap.exists()) {
                     const data = pelSnap.data();
-                    const namaPenuh = data.namaPenuh || data.nama || "PELAJAR REAL-MPC";
-                    document.getElementById('papar-nama-pelajar').innerText = namaPenuh;
+                    namaPelajarSemasa = data.namaPenuh || data.nama || "PELAJAR REAL-MPC";
+                    document.getElementById('papar-nama-pelajar').innerText = namaPelajarSemasa;
                     document.getElementById('papar-ic-pelajar').innerText = `IC: ${icPelajarSemasa}`;
                 } else {
                     document.getElementById('papar-nama-pelajar').innerText = "Ralat: IC Tiada Di DB";
@@ -275,7 +288,7 @@
         }
 
         // Jalankan fungsi muat profil header
-        muatProfilHeader();
+        await muatProfilHeader();
 
         // 1. REAL-TIME LISTENER SINKRONISASI KELAS
         function dengarKelasSaya() {
@@ -298,16 +311,21 @@
                         divBox.innerHTML = `
                             <div class="class-header">
                                 <span class="class-badge">Kod: ${kod}</span>
-                                <h3>${data.namaKelas}</h3>
-                                <div class="class-subjek"><i class="fa-solid fa-book"></i> ${data.subjek}</div>
+                                <h3>${data.namaKelas || "Kelas Tanpa Nama"}</h3>
+                                <div class="class-subjek"><i class="fa-solid fa-book"></i> ${data.subjek || "Subjek tidak ditentukan"}</div>
                             </div>
                             <div class="class-footer">
                                 <div class="teacher-info">
-                                    <i class="fa-solid fa-chalkboard-user"></i> Pengajar REAL-MPC
+                                    <i class="fa-solid fa-chalkboard-user"></i> Pengajar: ${data.pengajar || "REAL-MPC"}
                                 </div>
-                                <button class="btn-view-class" data-kod="${kod}">
-                                    <i class="fa-solid fa-folder-open"></i> Lihat Kelas
-                                </button>
+                                <div class="class-actions">
+                                    <button class="btn-view-class" data-kod="${kod}">
+                                        <i class="fa-solid fa-folder-open"></i> Lihat
+                                    </button>
+                                    <button class="btn-leave-class" data-kod="${kod}" data-nama="${data.namaKelas || 'Kelas'}">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Tinggal
+                                    </button>
+                                </div>
                             </div>
                         `;
                         galeriBox.appendChild(divBox);
@@ -318,10 +336,20 @@
                     galeriBox.innerHTML = `<div class="gallery-empty">Tiada rekod kelas disertai untuk IC ini. <br><br>Sila gunakan kod borang atau kod manual untuk daftar.</div>`;
                 }
 
+                // Event listeners for view buttons
                 document.querySelectorAll('.btn-view-class').forEach(button => {
                     button.onclick = function() {
                         const kodKelas = this.getAttribute('data-kod');
                         lihatDetailKelas(kodKelas);
+                    };
+                });
+
+                // Event listeners for leave buttons
+                document.querySelectorAll('.btn-leave-class').forEach(button => {
+                    button.onclick = function() {
+                        const kodKelas = this.getAttribute('data-kod');
+                        const namaKelas = this.getAttribute('data-nama');
+                        tinggalkanKelas(kodKelas, namaKelas);
                     };
                 });
 
@@ -352,7 +380,19 @@
                 const kelasSnap = await getDoc(kelasRef);
 
                 if (!kelasSnap.exists()) {
-                    alert("Kod kelas tidak ditemui! Sila semak semula.");
+                    alert("❌ Kod kelas tidak ditemui! Sila semak semula.");
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas`;
+                    return;
+                }
+
+                const dataKelas = kelasSnap.data();
+                const senaraiPelajar = dataKelas.senaraiPelajar || [];
+
+                if (senaraiPelajar.includes(icPelajarSemasa)) {
+                    alert(`⚠️ Anda sudah menyertai kelas "${dataKelas.namaKelas}".`);
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas`;
                     return;
                 }
 
@@ -360,19 +400,41 @@
                     senaraiPelajar: arrayUnion(icPelajarSemasa)
                 });
 
-                alert(`Berjaya menyertai kelas "${kelasSnap.data().namaKelas}".`);
+                alert(`✅ Berjaya menyertai kelas "${dataKelas.namaKelas}".`);
                 document.getElementById('form-join-kod').reset();
 
             } catch (error) {
                 console.error(error);
-                alert("Sistem ralat.");
+                alert("❌ Sistem ralat. Sila cuba lagi.");
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas`;
             }
         });
 
-        // 3. FUNGSI LIHAT DETAIL KELAS
+        // 3. FUNGSI TINGGALKAN KELAS (LEAVE CLASS)
+        async function tinggalkanKelas(kodKelas, namaKelas) {
+            if (!confirm(`Adakah anda pasti mahu tinggalkan kelas "${namaKelas}"?\n\nAnda tidak akan dapat mengakses modul kelas ini lagi.`)) {
+                return;
+            }
+
+            try {
+                const kelasRef = doc(db, "kelas", kodKelas);
+                
+                // Remove student IC from the class
+                await updateDoc(kelasRef, {
+                    senaraiPelajar: arrayRemove(icPelajarSemasa)
+                });
+
+                alert(`✅ Anda telah berjaya meninggalkan kelas "${namaKelas}".`);
+                
+            } catch (error) {
+                console.error("Error leaving class:", error);
+                alert("❌ Gagal meninggalkan kelas. Sila cuba lagi.");
+            }
+        }
+
+        // 4. FUNGSI LIHAT DETAIL KELAS
         async function lihatDetailKelas(kodKelas) {
             document.getElementById('modal-detail-kelas').style.display = 'flex';
             const listRakan = document.getElementById('md-senarai-rakan');
@@ -384,9 +446,13 @@
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    document.getElementById('md-nama-kelas').innerText = data.namaKelas;
-                    document.getElementById('md-subjek').innerText = data.subjek;
+                    document.getElementById('md-nama-kelas').innerText = data.namaKelas || "Kelas Tanpa Nama";
+                    document.getElementById('md-subjek').innerText = data.subjek || "Subjek tidak ditentukan";
                     document.getElementById('md-kod').innerText = kodKelas;
+                    
+                    // Show teacher name
+                    const teacherName = data.pengajar || "REAL-MPC";
+                    document.getElementById('md-pengajar').innerHTML = `<i class="fa-solid fa-chalkboard-user"></i> ${teacherName}`;
 
                     const arrPelajar = data.senaraiPelajar || [];
                     listRakan.innerHTML = '';
@@ -405,20 +471,28 @@
                             li.className = 'student-item';
                             if(ic === icPelajarSemasa) {
                                 li.innerHTML = `<i class="fa-solid fa-circle-user" style="color:#2563eb"></i> <span>${namaPapar} <strong>(Anda)</strong></span>`;
-                                li.style.background = "#f0fdf4";
+                                li.classList.add('current-user');
                             } else {
                                 li.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${namaPapar}</span>`;
                             }
                             listRakan.appendChild(li);
                         }
                     } else {
-                        listRakan.innerHTML = '<li style="text-align:center;">Hanya anda di dalam kelas ini.</li>';
+                        listRakan.innerHTML = '<li style="text-align:center; color: #64748b; padding: 20px;">Tiada pelajar lain dalam kelas ini.</li>';
                     }
+                } else {
+                    listRakan.innerHTML = '<li style="text-align:center; color: #ef4444;">Kelas tidak ditemui.</li>';
                 }
             } catch (error) {
-                listRakan.innerHTML = '<li style="text-align:center; color:#ef4444;">Gagal memuatkan.</li>';
+                console.error("Error loading class details:", error);
+                listRakan.innerHTML = '<li style="text-align:center; color: #ef4444;">Gagal memuatkan data kelas.</li>';
             }
         }
+
+        // Make functions available globally for inline onclick
+        window.lihatDetailKelas = lihatDetailKelas;
+        window.tinggalkanKelas = tinggalkanKelas;
+
     </script>
 
     <script>
@@ -432,6 +506,13 @@
                 modal.style.display = "none";
             }
         }
+
+        // Also close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                tutupModal();
+            }
+        });
     </script>
 </body>
 </html>
