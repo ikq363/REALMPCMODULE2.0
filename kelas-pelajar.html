@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelas Saya | REAL-MPC Pelajar</title>
     
+    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -114,6 +115,7 @@
 </head>
 <body>
 
+    <!-- ================= BAR SISI NAVIGASI PELAJAR ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -130,6 +132,7 @@
         </a>
     </nav>
 
+    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         <header class="top-bar">
             <div class="welcome-msg">
@@ -138,6 +141,7 @@
         </header>
 
         <section class="content-grid">
+            <!-- KAD KIRI: ENTER CODE BOX -->
             <div class="card">
                 <div class="card-title"><i class="fa-solid fa-key" style="color:var(--accent-blue)"></i>Sertai Kelas Baharu</div>
                 <form id="form-join-kod">
@@ -149,6 +153,7 @@
                 </form>
             </div>
 
+            <!-- KAD KANAN: GALLERY VIEW KELAS YANG TELAH DISERTAI -->
             <div>
                 <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-table-cells-large" style="color:var(--accent-blue)"></i> Senarai Kelas Anda
@@ -161,6 +166,7 @@
         </section>
     </main>
 
+    <!-- ================= MODAL DETAIL KELAS (READ ONLY POPUP) ================= -->
     <div class="modal" id="modal-detail-kelas">
         <div class="modal-content">
             <div class="modal-header">
@@ -169,6 +175,7 @@
             </div>
             <div class="modal-body">
                 
+                <!-- Maklumat Detail Ringkas -->
                 <div class="meta-detail-box">
                     <div class="meta-item">
                         <span class="meta-label">Subjek</span>
@@ -180,14 +187,17 @@
                     </div>
                 </div>
 
+                <!-- Senarai Rakan Sekelas yang dah join -->
                 <div class="section-title"><i class="fa-solid fa-user-group"></i> Rakan Sekelas Berdaftar</div>
                 <ul class="student-list" id="md-senarai-rakan">
-                    </ul>
+                    <!-- Senarai nama diisi menggunakan JS -->
+                </ul>
 
             </div>
         </div>
     </div>
 
+    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -205,9 +215,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Pastikan No IC pelajar diambil daripada Session Storage
+        // POPUP DINAMIK: Untuk memudahkan ujian, kita tanya IC terus daripada pengguna jika tiada sesi aktif
         if (!sessionStorage.getItem("pelajar_ic")) {
-            sessionStorage.setItem("pelajar_ic", "081215085431"); 
+            let icTest = prompt("Sila masukkan No. IC Pelajar untuk melihat Senarai Kelas (Gunakan IC yang sama semasa klik link pendaftaran pautan tadi):", "081215085431");
+            if (icTest && icTest.trim() !== "") {
+                sessionStorage.setItem("pelajar_ic", icTest.trim());
+            } else {
+                sessionStorage.setItem("pelajar_ic", "081215085431"); 
+            }
         }
         const icPelajarSemasa = sessionStorage.getItem("pelajar_ic");
 
@@ -215,7 +230,7 @@
         function dengarKelasSaya() {
             const galeriBox = document.getElementById('galeri-kelas-pelajar');
             
-            // Guna onSnapshot untuk sync automatik tanpa refresh page
+            // Menggunakan onSnapshot untuk sync automatik tanpa refresh page
             onSnapshot(collection(db, "kelas"), (querySnapshot) => {
                 galeriBox.innerHTML = '';
                 let adaKelas = false;
@@ -225,6 +240,7 @@
                     const kod = doc.id;
                     const senaraiPelajar = data.senaraiPelajar || [];
 
+                    // Semak sama ada IC aktif ada dalam senarai kelas
                     if (senaraiPelajar.includes(icPelajarSemasa)) {
                         adaKelas = true;
                         
@@ -250,7 +266,7 @@
                 });
 
                 if (!adaKelas) {
-                    galeriBox.innerHTML = '<div class="gallery-empty">Anda belum menyertai mana-mana kelas. Masukkan kod kelas di menu sebelah kiri untuk mula belajar!</div>';
+                    galeriBox.innerHTML = `<div class="gallery-empty">Tiada rekod ditemui untuk IC: ${icPelajarSemasa}. <br><br> Sila masukkan kod kelas secara manual di menu sebelah kiri atau semak semula IC anda.</div>`;
                 }
 
                 // Selesaikan isu modular onclick dengan Event Listener Event Delegation
@@ -267,7 +283,7 @@
             });
         }
 
-        // Jalankan sistem pemantauan real-time
+        // Jalankan pemantauan real-time
         dengarKelasSaya();
 
         // 2. FUNGSI LOGIK MANUAL KOD SUBMIT
@@ -361,6 +377,7 @@
         }
     </script>
 
+    <!-- FUNGSI UTALITI UNTUK POPUP CLOSING -->
     <script>
         function tutupModal() {
             document.getElementById('modal-detail-kelas').style.display = 'none';
