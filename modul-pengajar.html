@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Pengajar | REAL-MPC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a; --accent-orange: #ff7a00; --text-dark: #0f172a; --text-muted: #64748b;
+            --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5500 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #f4f7fc; color: var(--text-dark); min-height: 100vh; display: flex; }
+
+        /* SIDEBAR SAMA SEPERTI ASAL */
+        .sidebar { width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%); color: white; padding: 30px 20px; position: fixed; height: 100vh; }
+        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; }
+        .logo-area h2 span { color: #ff7a00; }
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .menu-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; border-radius: 16px; }
+        .menu-item.active { background: var(--grad-pink); color: white; }
+        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .top-bar { background: rgba(255, 255, 255, 0.85); padding: 25px 30px; border-radius: 24px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+
+        /* GRID MODUL */
+        .modul-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .modul-card { 
+            background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 30px; 
+            text-align: center; cursor: pointer; transition: 0.3s; text-decoration: none; color: var(--primary);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .modul-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06); border-color: var(--accent-orange); }
+        .modul-card i { font-size: 2rem; color: var(--accent-orange); }
+        .modul-card h3 { font-size: 1.1rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-area"><h2>REAL-<span>MPC</span></h2><p style="font-size: 0.75rem; opacity: 0.6; text-transform: uppercase;">Panel Pengajar</p></div>
+        <div class="menu-list">
+            <a href="dashboard-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="profile-pengajar.html" class="menu-item"><i class="fa-solid fa-id-card-clip"></i> Profile</a>
+            <a href="kelas-pengajar.html" class="menu-item"><i class="fa-solid fa-school"></i> Kelas Saya</a>
+            <a href="modul-pengajar.html" class="menu-item active"><i class="fa-solid fa-book-open-reader"></i> Modul</a>
+            <a href="analisis-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-pie"></i> Analisis</a>
+        </div>
+        <a onclick="sessionStorage.clear(); window.location.href='login-pengajar.html';" class="menu-item" style="margin-top:auto; cursor:pointer; background: rgba(244, 63, 94, 0.1); color: #f43f5e;">
+            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-bar"><h1>Senarai Modul Aktiviti</h1></header>
+
+        <div class="modul-grid">
+            <script>
+                // Menjana 12 kad modul secara automatik
+                for (let i = 1; i <= 12; i++) {
+                    document.write(`
+                        <a href="aktiviti-${i}.html" class="modul-card">
+                            <i class="fa-solid fa-rocket"></i>
+                            <h3>AKTIVITI ${i}</h3>
+                        </a>
+                    `);
+                }
+            </script>
+        </div>
+    </main>
+
+</body>
+</html>
