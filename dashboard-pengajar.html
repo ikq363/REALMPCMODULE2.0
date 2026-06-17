@@ -401,12 +401,28 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Get teacher IC from session storage
-        const icPengajar = sessionStorage.getItem("pengajar_ic") || "881215085431";
+        // --- AMBIL IC PENGAJAR DARI SESSION STORAGE ---
+        // Cuba dapatkan dari session storage
+        let icPengajar = sessionStorage.getItem("pengajar_ic");
         
-        // --- 1. PAPAR NAMA DAN IC PENGAJAR ---
+        // Jika tiada, minta pengguna masukkan IC
+        if (!icPengajar) {
+            icPengajar = prompt("Sila masukkan No. IC Pengajar untuk login:", "881215085431");
+            if (icPengajar && icPengajar.trim() !== "") {
+                sessionStorage.setItem("pengajar_ic", icPengajar.trim());
+                icPengajar = icPengajar.trim();
+            } else {
+                icPengajar = "881215085431"; // Default IC
+                sessionStorage.setItem("pengajar_ic", icPengajar);
+            }
+        }
+
+        console.log("Pengajar IC:", icPengajar);
+
+        // --- 1. FUNGSI MUAT PROFIL PENGAJAR DARI FIRESTORE ---
         async function muatProfilPengajar() {
             try {
+                // Rujuk dokumen pengajar menggunakan IC
                 const pengajarRef = doc(db, "pengajar", icPengajar);
                 const pengajarSnap = await getDoc(pengajarRef);
                 
@@ -421,20 +437,29 @@
                     document.getElementById('paparan-nama-penuh').innerText = namaPenuh;
                     document.getElementById('paparan-ic-pengajar').innerText = `IC: ${icPengajar}`;
                     
-                    // Store in session for other pages
+                    // Store name in session for other pages
                     sessionStorage.setItem("pengajarLogMasuk", namaPenuh);
+                    
+                    console.log("Profil pengajar dimuatkan:", namaPenuh);
                 } else {
-                    document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
-                    document.getElementById('paparan-nama-penuh').innerText = "Pengajar REAL-MPC";
+                    // Jika tiada rekod di Firestore, gunakan nama dari session atau default
+                    const namaFromSession = sessionStorage.getItem("pengajarLogMasuk") || "Pengajar REAL-MPC";
+                    document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaFromSession + "!";
+                    document.getElementById('paparan-nama-penuh').innerText = namaFromSession;
                     document.getElementById('paparan-ic-pengajar').innerText = `IC: ${icPengajar}`;
+                    
+                    console.warn("Tiada rekod pengajar untuk IC:", icPengajar);
                 }
             } catch (error) {
                 console.error("Error loading teacher profile:", error);
+                // Fallback
                 document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
+                document.getElementById('paparan-nama-penuh').innerText = "Pengajar REAL-MPC";
+                document.getElementById('paparan-ic-pengajar').innerText = `IC: ${icPengajar}`;
             }
         }
 
-        // Load teacher profile
+        // Panggil fungsi muat profil
         await muatProfilPengajar();
 
         // --- 2. KIRA JUMLAH KELAS YANG DIBUAT OLEH PENGAJAR INI ---
@@ -457,6 +482,8 @@
                 setTimeout(() => {
                     kelasCountElement.style.transform = 'scale(1)';
                 }, 300);
+                
+                console.log("Jumlah kelas pengajar:", totalKelas);
             }, (error) => {
                 console.error("Error counting classes:", error);
                 kelasCountElement.innerText = "0";
@@ -475,7 +502,7 @@
                 where("pengajarIC", "==", icPengajar)
             );
 
-            let unsubscribeKelas = onSnapshot(kelasQuery, async (kelasSnapshot) => {
+            const unsubscribeKelas = onSnapshot(kelasQuery, async (kelasSnapshot) => {
                 // Collect all student ICs from all classes
                 const allStudentICs = new Set();
                 
@@ -496,6 +523,8 @@
                     pelajarCountElement.style.transform = 'scale(1)';
                 }, 300);
                 
+                console.log("Jumlah pelajar unik:", totalPelajar);
+                
             }, (error) => {
                 console.error("Error counting students:", error);
                 pelajarCountElement.innerText = "0";
@@ -504,17 +533,17 @@
             return unsubscribeKelas;
         }
 
-        // Start listening
+        // --- MULAKAN SEMUA LISTENER ---
         const unsubscribeKelas = kiraKelasPengajar();
         const unsubscribePelajar = kiraPelajarPengajar();
 
-        // Cleanup listeners when page unloads
+        // --- CLEANUP LISTENERS ---
         window.addEventListener('beforeunload', () => {
             if (unsubscribeKelas) unsubscribeKelas();
             if (unsubscribePelajar) unsubscribePelajar();
         });
 
-        // Handle logout
+        // --- FUNGSI LOGOUT ---
         window.logoutAkaun = function() {
             if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
                 sessionStorage.clear();
@@ -522,7 +551,7 @@
             }
         };
 
-        console.log("Teacher IC:", icPengajar);
+        console.log("Dashboard pengajar sedia digunakan");
     </script>
 
 </body>
