@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengajar | REAL-MPC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent-orange: #ff7a00;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            --grad-blue: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            --grad-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-area h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .logo-area h2 span { color: #ff7a00; }
+        .logo-area p { font-size: 0.75rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
+        .menu-item.m-profile:hover { background: var(--grad-pink); color: white; transform: translateX(8px); }
+        .menu-item.m-kelas:hover { background: var(--grad-blue); color: white; transform: translateX(8px); }
+        .menu-item.m-modul:hover { background: var(--grad-purple); color: white; transform: translateX(8px); }
+        .menu-item.m-analisis:hover { background: var(--grad-emerald); color: white; transform: translateX(8px); }
+        .menu-item i { font-size: 1.2rem; width: 25px; }
+
+        .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); cursor: pointer; }
+        .logout-btn:hover { background: #f43f5e; color: white !important; box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4); }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 25px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-msg h1 { font-size: 1.8rem; font-weight: 800; }
+        .welcome-msg p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+
+        /* --- PROFILE CARD CONTAINER --- */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        /* Avatar Card */
+        .avatar-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: fit-content;
+        }
+
+        .avatar-box {
+            width: 120px;
+            height: 120px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: var(--accent-orange);
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .avatar-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+        .avatar-card p { font-size: 0.85rem; color: white; background: var(--primary); padding: 4px 14px; border-radius: 100px; font-weight: 700; text-transform: uppercase; }
+
+        /* Details Card Form */
+        .details-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .input-wrapper input, .input-wrapper select {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: #f8fafc; /* Rupa asal read-only */
+            outline: none;
+        }
+
+        /* Gaya semasa mod edit diaktifkan */
+        .input-wrapper input:not([disabled]), .input-wrapper select:not([disabled]) {
+            background-color: #fff;
+            border-color: var(--accent-orange);
+        }
+
+        /* --- ACTION BUTTONS --- */
+        .btn-container {
+            margin-top: 32px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-edit { background: var(--primary); color: white; }
+        .btn-edit:hover { background: #1e293b; transform: translateY(-2px); }
+
+        .btn-save { background: var(--grad-emerald); color: white; display: none; }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+
+        .btn-cancel { background: #e2e8f0; color: var(--text-dark); display: none; }
+        .btn-cancel:hover { background: #cbd5e1; }
+
+        /* Responsif */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 20px; border-radius: 0 0 24px 24px; }
+            .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .main-content { width: 100%; margin-left: 0; padding: 20px; }
+            .profile-container { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Panel Pengajar</p>
+        </div>
+
+        <div class="menu-list">
+            <a href="dashboard-pengajar.html" class="menu-item m-dashboard" style="color: rgba(255,255,255,0.7);">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+            <a href="profile-pengajar.html" class="menu-item m-profile active">
+                <i class="fa-solid fa-id-card-clip"></i> Profile
+            </a>
+            <a href="kelas-pengajar.html" class="menu-item m-kelas">
+                <i class="fa-solid fa-school"></i> Kelas Saya
+            </a>
+            <a href="modul-pengajar.html" class="menu-item m-modul">
+                <i class="fa-solid fa-book-open-reader"></i> Modul
+            </a>
+            <a href="analisis-pengajar.html" class="menu-item m-analisis">
+                <i class="fa-solid fa-chart-pie"></i> Analisis
+            </a>
+        </div>
+
+        <a onclick="logoutAkaun()" class="menu-item logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
+    </nav>
+
+    <main class="main-content">
+        
+        <header class="top-bar">
+            <div class="welcome-msg">
+                <h1>Profil Pengajar</h1>
+                <p>Urus dan kemas kini maklumat peribadi serta peranan anda di sini.</p>
+            </div>
+        </header>
+
+        <section class="profile-container">
+            
+            <div class="avatar-card">
+                <div class="avatar-box">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <h3 id="side-nama">Memuatkan...</h3>
+                <p>Pengajar</p>
+            </div>
+
+            <div class="details-card">
+                <form id="form-profil">
+                    <div class="form-grid">
+                        
+                        <div class="form-group full-width">
+                            <label>Nama Penuh Pengajar</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="prof-nama" disabled required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>No. Kad Pengenalan (ID Unik)</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-id-card"></i>
+                                <input type="text" id="prof-ic" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombor Telefon</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-phone"></i>
+                                <input type="text" id="prof-tel" placeholder="Contoh: 0123456789" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>E-mel Rasmi</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" id="prof-email" placeholder="Contoh: nama@email.com" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Subjek Kepakaran</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <input type="text" id="prof-subjek" placeholder="Contoh: Sains Termaju / Matematik" disabled>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="button" id="btn-ubah" class="btn btn-edit" onclick="aktifkanModEdit()">
+                            <i class="fa-solid fa-user-pen"></i> Kemaskini Profil
+                        </button>
+                        
+                        <button type="button" id="btn-batal" class="btn btn-cancel" onclick="matikanModEdit()">
+                            Batal
+                        </button>
+                        
+                        <button type="submit" id="btn-simpan" class="btn btn-save">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Firebase REAL-MPC
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Ambil ID / Nama pengajar yang sedang log masuk dari Session
+        const namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
+
+        // Jika tiada rekod login, tendang balik ke page login
+        if (!namaCikguSession) {
+            alert("Akses ditolak. Sila log masuk terlebih dahulu.");
+            window.location.href = "login-pengajar.html";
+        }
+
+        // Panggil data profil sebaik fail dimuatkan
+        async function dapatkanProfilCikgu() {
+            try {
+                // Mencari dokumen pengajar berdasarkan nama penuh (mengikut struktur login sistem sedia ada)
+                const docRef = doc(db, "pengajar", namaCikguSession);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Masukkan data ke dalam input form
+                    document.getElementById('side-nama').innerText = data.namaPenuh || namaCikguSession;
+                    document.getElementById('prof-nama').value = data.namaPenuh || namaCikguSession;
+                    document.getElementById('prof-ic').value = data.noIC || 'Tiada Data';
+                    document.getElementById('prof-tel').value = data.noTelefon || '';
+                    document.getElementById('prof-email').value = data.emel || '';
+                    document.getElementById('prof-subjek').value = data.subjek || '';
+                } else {
+                    // Jika dokumen belum wujud di Firestore (kes login pertama kali tanpa data tambahan)
+                    document.getElementById('side-nama').innerText = namaCikguSession;
+                    document.getElementById('prof-nama').value = namaCikguSession;
+                    document.getElementById('prof-ic').value = 'Sila kemas kini';
+                }
+            } catch (error) {
+                console.error("Ralat memuatkan profil:", error);
+            }
+        }
+
+        // Jalankan fungsi bacaan data
+        dapatkanProfilCikgu();
+
+        // SIMPAN PERUBAHAN DATA PROFIL KE FIRESTORE
+        document.getElementById('form-profil').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const tel = document.getElementById('prof-tel').value.trim();
+            const email = document.getElementById('prof-email').value.trim();
+            const subjek = document.getElementById('prof-subjek').value.trim();
+            const ic = document.getElementById('prof-ic').value.trim();
+
+            try {
+                // Update atau Set dokumen pengajar
+                await setDoc(doc(db, "pengajar", namaCikguSession), {
+                    namaPenuh: namaCikguSession,
+                    noIC: ic,
+                    noTelefon: tel,
+                    emel: email,
+                    subjek: subjek,
+                    tarikhKemaskini: new Date().toISOString()
+                }, { merge: true }); // Menggunakan merge: true supaya data sedia ada tidak hilang
+
+                alert("Profil berjaya dikemas kini!");
+                matikanModEdit();
+                dapatkanProfilCikgu(); // Muat semula paparan baharu
+            } catch (error) {
+                console.error("Ralat menyimpan data profil:", error);
+                alert("Gagal menyimpan perubahan. Sila cuba lagi.");
+            }
+        });
+    </script>
+
+    <script>
+        function aktifkanModEdit() {
+            // Aktifkan input medan tertentu (Kecuali Nama dan IC yang dikunci sebagai ID rujukan sistem)
+            document.getElementById('prof-tel').disabled = false;
+            document.getElementById('prof-email').disabled = false;
+            document.getElementById('prof-subjek').disabled = false;
+
+            // Tukar paparan butang kawalan
+            document.getElementById('btn-ubah').style.display = 'none';
+            document.getElementById('btn-batal').style.display = 'block';
+            document.getElementById('btn-simpan').style.display = 'block';
+        }
+
+        function matikanModEdit() {
+            // Kunci semula input medan
+            document.getElementById('prof-tel').disabled = true;
+            document.getElementById('prof-email').disabled = true;
+            document.getElementById('prof-subjek').disabled = true;
+
+            // Kembalikan paparan butang asal
+            document.getElementById('btn-ubah').style.display = 'block';
+            document.getElementById('btn-batal').style.display = 'none';
+            document.getElementById('btn-simpan').style.display = 'none';
+        }
+
+        function logoutAkaun() {
+            if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
+                sessionStorage.clear();
+                window.location.href = "login-pengajar.html";
+            }
+        }
+    </script>
+</body>
+</html>
