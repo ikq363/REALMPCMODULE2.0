@@ -5,58 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Saya | REAL-MPC</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Fredoka:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --primary: #0f172a; --accent-blue: #2563eb; }
+        :root { --sidebar-bg: #0f172a; --accent: #2563eb; --bg: #f8fafc; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: #f4f7fc; display: flex; min-height: 100vh; }
+        body { display: flex; min-height: 100vh; background-color: var(--bg); }
 
-        /* --- SIDEBAR STATIK (SAMA UNTUK SEMUA FAIL) --- */
-        .sidebar { width: 280px; background: #0f172a; color: white; padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; }
-        .logo-area { text-align: center; margin-bottom: 40px; }
-        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; }
-        .logo-area h2 span { color: var(--accent-blue); }
-        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
-        .menu-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; border-radius: 16px; }
-        .menu-item.active { background: var(--accent-blue); color: white; }
-        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
-        .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; margin-top: auto; cursor: pointer; }
+        /* --- SIDEBAR (KEKAL 4 MENU SAHAJA) --- */
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: white; padding: 25px; display: flex; flex-direction: column; position: fixed; height: 100%; }
+        .logo { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; margin-bottom: 40px; color: white; text-decoration: none; display: block; }
+        .logo span { color: var(--accent); }
+        .menu { list-style: none; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+        .menu a { text-decoration: none; color: #94a3b8; padding: 12px 15px; border-radius: 10px; display: flex; align-items: center; gap: 12px; font-weight: 600; transition: 0.3s; }
+        .menu a:hover, .menu a.active { background: var(--accent); color: white; }
+        .logout { margin-top: auto; color: #ef4444; font-weight: 600; cursor: pointer; padding: 12px; }
 
-        /* --- MAIN CONTENT --- */
-        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
-        .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .card h2 { margin-bottom: 25px; color: var(--primary); }
-        .info-row { display: flex; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-        .label { width: 150px; font-weight: 700; color: #64748b; }
+        /* --- CONTENT --- */
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .card h2 { margin-bottom: 20px; color: #1e293b; }
+        .info-group { margin-bottom: 15px; }
+        .label { font-size: 0.9rem; color: #64748b; font-weight: 600; }
+        .value { font-size: 1.1rem; color: #1e293b; font-weight: 700; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR STATIK -->
+    <!-- SIDEBAR STATIK (SALIN BAHAGIAN INI KE FAIL LAIN) -->
     <nav class="sidebar">
-        <div class="logo-area">
-            <h2>REAL-<span>MPC</span></h2>
+        <a href="#" class="logo">REAL-<span>MPC</span></a>
+        <div class="menu">
+            <a href="dashboard-pelajar.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a href="profile-pelajar.html" class="active"><i class="fa-solid fa-user"></i> Profil Saya</a>
+            <a href="kelas-pelajar.html"><i class="fa-solid fa-graduation-cap"></i> Kelas Saya</a>
+            <a href="modul-pelajar.html"><i class="fa-solid fa-book"></i> Modul Pembelajaran</a>
         </div>
-        <div class="menu-list">
-            <a href="dashboard-pelajar.html" class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-            <a href="profile-pelajar.html" class="menu-item active"><i class="fa-solid fa-user"></i> Profil Saya</a>
-            <a href="kelas-pelajar.html" class="menu-item"><i class="fa-solid fa-graduation-cap"></i> Kelas Saya</a>
-            <a href="modul-pelajar.html" class="menu-item"><i class="fa-solid fa-book"></i> Modul Pembelajaran</a>
-        </div>
-        <a onclick="sessionStorage.clear(); window.location.href='login-pelajar.html';" class="menu-item logout-btn">
-            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
-        </a>
+        <a onclick="window.location.href='login-pelajar.html'" class="logout"><i class="fa-solid fa-right-from-bracket"></i> Log Keluar</a>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
+    <!-- CONTENT -->
+    <main class="main">
         <div class="card">
-            <h2>Maklumat Profil Pelajar</h2>
-            <div id="profil-data">
-                <div class="info-row"><div class="label">Nama Penuh:</div><span id="nama-display">-</span></div>
-                <div class="info-row"><div class="label">No. IC:</div><span id="ic-display">-</span></div>
+            <h2>Profil Pelajar</h2>
+            <div class="info-group">
+                <div class="label">Nama Penuh</div>
+                <div class="value" id="nama-display">-</div>
+            </div>
+            <div class="info-group">
+                <div class="label">No. Kad Pengenalan</div>
+                <div class="value" id="ic-display">-</div>
             </div>
         </div>
     </main>
@@ -65,17 +65,17 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { /* SAMA DENGAN YG DAHULU */ };
+        // Gantikan dengan firebaseConfig cikgu yang sedia ada
+        const firebaseConfig = { /* ... */ }; 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const icPelajar = sessionStorage.getItem("pelajar_ic");
-        if(icPelajar) {
-            const docRef = doc(db, "pelajar", icPelajar);
-            getDoc(docRef).then(snap => {
+        const ic = sessionStorage.getItem("pelajar_ic");
+        if(ic) {
+            getDoc(doc(db, "pelajar", ic)).then(snap => {
                 if(snap.exists()){
                     document.getElementById('nama-display').innerText = snap.data().namaPenuh;
-                    document.getElementById('ic-display').innerText = icPelajar;
+                    document.getElementById('ic-display').innerText = ic;
                 }
             });
         }
