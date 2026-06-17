@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sertai Kelas | REAL-MPC</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent-orange: #ff7a00;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5500 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
+        body { background: #f4f7fc; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+
+        .join-container { background: white; width: 100%; max-width: 480px; border-radius: 28px; padding: 40px 35px; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); border: 1px solid #e2e8f0; text-align: center; }
+        
+        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 2.2rem; letter-spacing: 1px; color: var(--primary); }
+        .logo-area h2 span { color: var(--accent-orange); }
+        .logo-area p { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; margin-bottom: 30px; font-weight: 700; }
+
+        /* KAD INFO KELAS DARI URL */
+        .class-info-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; padding: 20px; margin-bottom: 30px; text-align: left; position: relative; overflow: hidden; }
+        .class-info-card::before { content: '\f19c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: -15px; bottom: -20px; font-size: 5.5rem; color: rgba(37, 99, 235, 0.05); }
+        .badge-kod { background: #2563eb; color: white; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 8px; text-transform: uppercase; }
+        .class-name { font-size: 1.3rem; font-weight: 800; color: var(--primary); line-height: 1.2; }
+        .class-subject { font-size: 0.9rem; color: #2563eb; font-weight: 600; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+
+        /* BORANG INPUT */
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px; text-align: left; }
+        .form-group label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; }
+        .form-group input { width: 100%; padding: 16px 18px; border: 2px solid #e2e8f0; border-radius: 16px; font-size: 1rem; font-weight: 600; outline: none; background: #f8fafc; text-align: center; letter-spacing: 1px; }
+        .form-group input:focus { border-color: var(--accent-orange); background: #fff; box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.1); }
+        .form-group input::placeholder { letter-spacing: normal; font-size: 0.9rem; opacity: 0.6; }
+
+        .btn-join { width: 100%; padding: 16px; border-radius: 16px; font-size: 1.05rem; font-weight: 700; cursor: pointer; border: none; color: white; background: var(--grad-orange); display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(255, 122, 0, 0.25); }
+        .btn-join:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255, 122, 0, 0.35); }
+        .btn-join:disabled { background: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        /* COBAAN RALAT */
+        .error-container { display: none; background: #fef2f2; border: 1px dashed #fca5a5; color: #ef4444; padding: 25px; border-radius: 20px; font-weight: 600; text-align: center; }
+        .error-container i { font-size: 2rem; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="join-container" id="box-utama">
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Penyertaan Kelas Pelajar</p>
+        </div>
+
+        <!-- Bahagian Memuat Data Kelas Semasa Link Dibuka -->
+        <div id="loading-status" style="font-weight: 600; color: var(--text-muted); padding: 20px 0;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="color:var(--accent-orange); font-size: 1.5rem; margin-bottom: 10px;"></i>
+            <br>Menyemak maklumat pautan kelas...
+        </div>
+
+        <!-- Bahagian Borang (Hanya keluar jika kod sah) -->
+        <div id="form-join-area" style="display: none;">
+            <div class="class-info-card">
+                <span class="badge-kod" id="lbl-kod">KOD: -----</span>
+                <div class="class-name" id="lbl-nama-kelas">Nama Kelas Memuatkan...</div>
+                <div class="class-subject"><i class="fa-solid fa-book-bookmark"></i> <span id="lbl-subjek">Subjek</span></div>
+            </div>
+
+            <form id="form-sertai">
+                <div class="form-group">
+                    <label>Masukkan No. Kad Pengenalan Pelajar</label>
+                    <input type="text" id="no-ic" required autocomplete="off" placeholder="Contoh: 081215085431" maxlength="12">
+                </div>
+                <button type="submit" class="btn-join" id="btn-hantar">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sahkan & Masuk Kelas
+                </button>
+            </form>
+        </div>
+
+        <!-- Paparan Jika Link Rosak / Kod Salah -->
+        <div class="error-container" id="error-box">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div id="error-msg">Pautan kelas tidak sah atau kod kelas telah dipadamkan oleh pengajar.</div>
+        </div>
+    </div>
+
+    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let kodKelasDitemui = "";
+
+        // 1. AUTO RUN: BACA PARAMETER '?code=XXXXX' DARI PAUTAN URL
+        function dapatkanKodDariUrl() {
+            const parameterUrl = new URLSearchParams(window.location.search);
+            return parameterUrl.get('code') ? parameterUrl.get('code').toUpperCase().trim() : null;
+        }
+
+        // 2. SEMAK KEDUDUKAN KELAS DI DATABASE
+        async function semakDanPaparkanKelas() {
+            const kod = dapatkanKodDariUrl();
+            const loadingStatus = document.getElementById('loading-status');
+            const formArea = document.getElementById('form-join-area');
+            const errorBox = document.getElementById('error-box');
+
+            if (!kod) {
+                loadingStatus.style.display = 'none';
+                errorBox.style.display = 'block';
+                document.getElementById('error-msg').innerText = "Pautan tidak lengkap. Sila pastikan kod kelas disertakan pada pautan.";
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "kelas", kod);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const dataKelas = docSnap.data();
+                    kodKelasDitemui = kod; // Simpan kod global
+
+                    // Masukkan data ke dalam UI
+                    document.getElementById('lbl-kod').innerText = `KOD KELAS: ${kod}`;
+                    document.getElementById('lbl-nama-kelas').innerText = dataKelas.namaKelas;
+                    document.getElementById('lbl-subjek').innerText = dataKelas.subjek;
+
+                    // Tukar paparan interface
+                    loadingStatus.style.display = 'none';
+                    formArea.style.display = 'block';
+                } else {
+                    loadingStatus.style.display = 'none';
+                    errorBox.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Ralat semak kelas:", error);
+                loadingStatus.style.display = 'none';
+                errorBox.style.display = 'block';
+                document.getElementById('error-msg').innerText = "Ralat sistem berlaku ketika menghubungi database.";
+            }
+        }
+
+        // Jalankan semakan sebaik sahaja halaman dibuka
+        semakDanPaparkanKelas();
+
+        // 3. PROSES SUBMIT BORANG MASUK KELAS
+        document.getElementById('form-sertai').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputIc = document.getElementById('no-ic').value.trim();
+            const btnHantar = document.getElementById('btn-hantar');
+
+            if (inputIc.length < 5) {
+                alert("Sila masukkan No. IC yang betul.");
+                return;
+            }
+
+            // Kunci butang bagi mengelakkan double click submit
+            btnHantar.disabled = true;
+            btnHantar.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses kemasukan...`;
+
+            try {
+                // LANGKAH A: Semak adakah pelajar ini sudah berdaftar di dalam sistem (`collection("pelajar")`)
+                const pelajarRef = doc(db, "pelajar", inputIc);
+                const pelajarSnap = await getDoc(pelajarRef);
+
+                if (!pelajarSnap.exists()) {
+                    alert("No. Kad Pengenalan anda belum berdaftar di dalam sistem portal REAL-MPC. Sila daftar akaun pelajar anda terlebih dahulu.");
+                    btnHantar.disabled = false;
+                    btnHantar.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sahkan & Masuk Kelas`;
+                    return;
+                }
+
+                // LANGKAH B: Masukkan IC pelajar ke dalam array `senaraiPelajar` di dokumen kelas berkenaan
+                const kelasRef = doc(db, "kelas", kodKelasDitemui);
+                await updateDoc(kelasRef, {
+                    senaraiPelajar: arrayUnion(inputIc)
+                });
+
+                // Kejayaan!
+                alert(`Tahniah! Anda berjaya didaftarkan masuk ke dalam kelas "${document.getElementById('lbl-nama-kelas').innerText}".`);
+                
+                // Boleh lencongkan pelajar ke halaman login pelajar atau dashboard mereka selepas ini
+                window.location.href = "login-pelajar.html";
+
+            } catch (error) {
+                console.error("Ralat pendaftaran masuk:", error);
+                alert("Gagal menyertai kelas akibat masalah teknikal.");
+                btnHantar.disabled = false;
+                btnHantar.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sahkan & Masuk Kelas`;
+            }
+        });
+    </script>
+</body>
+</html>
