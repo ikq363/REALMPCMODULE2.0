@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sertai Kelas | REAL-MPC</title>
+    <title>Kelas Saya | REAL-MPC Pelajar</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -16,67 +15,220 @@
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --grad-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
-        body { background-color: #f4f7fc; color: var(--text-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        body { background-color: #f4f7fc; color: var(--text-dark); min-height: 100vh; display: flex; }
 
-        .container { background: white; border-radius: 28px; padding: 40px; width: 100%; max-width: 480px; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-family: 'Fredoka', sans-serif; font-size: 2rem; color: var(--primary); }
-        .header h1 span { color: var(--accent-blue); }
-        .header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; font-weight: 500; }
+        /* --- SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: 280px; background: linear-gradient(180deg, #0f172a 0%, #0f172a 100%); color: white;
+            padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 100vh; position: fixed; left: 0; top: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.05); z-index: 100;
+        }
+        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; letter-spacing: 1px; }
+        .logo-area h2 span { color: var(--accent-blue); }
+        .logo-area p { font-size: 0.75rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .menu-item {
+            display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: rgba(255,255,255,0.7);
+            text-decoration: none; font-weight: 600; font-size: 1rem; border-radius: 16px;
+        }
+        .menu-item.active { background: var(--grad-blue); color: white; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; transform: translateX(8px); }
+        .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.1); cursor: pointer; margin-top: auto; }
+        .logout-btn:hover { background: #f43f5e; color: white !important; }
 
-        .info-box { background: #eff6ff; border-left: 5px solid var(--accent-blue); padding: 15px; border-radius: 12px; margin-bottom: 25px; }
-        .info-box p { font-size: 0.9rem; font-weight: 600; color: #1e40af; }
-        .info-box span { display: block; font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-top: 4px; }
-
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-        .form-group label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; }
-        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 1rem; font-weight: 600; outline: none; background: #f8fafc; }
-        .form-group input:focus { border-color: var(--accent-blue); background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        /* --- MAIN CONTENT AREA --- */
+        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
         
-        .btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-primary { background: var(--grad-blue); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3); }
-        .btn:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+        /* --- KEMAS KINI TOP BAR (HEADER PROFIL) --- */
+        .top-bar { 
+            background: white; 
+            padding: 20px 30px; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02); 
+            margin-bottom: 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px;
+        }
+        .welcome-msg h1 { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+        .welcome-msg p { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; font-weight: 500; }
+        
+        /* Kad Info Pelajar Aktif di Header */
+        .user-header-card { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 12px 20px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+        }
+        .user-header-card i { font-size: 1.8rem; color: var(--accent-blue); background: #eff6ff; padding: 10px; border-radius: 12px; }
+        .user-info-text { display: flex; flex-direction: column; }
+        .user-info-text .user-name { font-size: 1rem; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+        .user-info-text .user-ic { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; }
+        
+        /* --- LAYOUT STRUCTURE --- */
+        .content-grid { display: grid; grid-template-columns: 360px 1fr; gap: 30px; }
+        .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.01); height: fit-content; }
+        .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+        
+        /* --- FORM MASUK KOD --- */
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--primary); }
+        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 1.1rem; font-weight: 700; outline: none; background: #f8fafc; text-align: center; letter-spacing: 2px; }
+        .form-group input:focus { border-color: var(--accent-blue); background: #fff; }
+        .btn { width: 100%; padding: 14px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-primary { background: var(--grad-blue); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); }
+
+        /* ================= GALLERY VIEW SYSTEM ================= */
+        .gallery-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        
+        .class-box { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.01); }
+        .class-box:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(15, 23, 42, 0.04); border-color: #cbd5e1; }
+        
+        .class-header { margin-bottom: 15px; }
+        .class-badge { background: #eff6ff; color: #2563eb; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+        .class-box h3 { font-size: 1.3rem; font-weight: 800; color: var(--primary); line-height: 1.2; margin-bottom: 6px; }
+        .class-subjek { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        
+        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
+        .teacher-info { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .btn-view-class:hover { background: #1e293b; }
+
+        .gallery-empty { text-align: center; color: var(--text-muted); padding: 60px 0; font-weight: 600; grid-column: 1/-1; }
+
+        /* ================= MODAL DETAIL KELAS ================= */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 28px; width: 90%; max-width: 550px; padding: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: skrinNaik 0.3s ease; max-height: 85vh; display: flex; flex-direction: column; }
+        @keyframes skrinNaik { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+        .modal-header h2 { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        .modal-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; border: none; background: none; }
+        .modal-close:hover { color: #f43f5e; }
+
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+        
+        .meta-detail-box { background: #f8fafc; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .meta-item { display: flex; flex-direction: column; gap: 4px; }
+        .meta-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .meta-value { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+
+        .section-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        
+        .student-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .student-item { background: #fff; padding: 12px 16px; border: 1px solid #f1f5f9; border-radius: 12px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 10px; color: #334155; }
+        .student-item i { color: #10b981; font-size: 0.85rem; }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 20px; }
+            .menu-list { flex-direction: row; flex-wrap: wrap; }
+            .main-content { width: 100%; margin-left: 0; padding: 20px; }
+            .content-grid { grid-template-columns: 1fr; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .user-header-card { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>REAL-<span>MPC</span></h1>
-            <p>Pendaftaran Masuk Bilik Darjah</p>
+    <nav class="sidebar">
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Portal Pelajar</p>
         </div>
-
-        <!-- Paparan Nama Kelas Automatik Dari URL -->
-        <div class="info-box">
-            <p><i class="fa-solid fa-graduation-cap"></i> Anda bakal menyertai kelas:</p>
-            <span id="nama-kelas-papar">Memuatkan maklumat kelas...</span>
+        <div class="menu-list">
+            <a href="dashboard-pelajar.html" class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a href="profile-pelajar.html" class="menu-item"><i class="fa-solid fa-user"></i> Profil Saya</a>
+            <a href="kelas-pelajar.html" class="menu-item active"><i class="fa-solid fa-graduation-cap"></i> Kelas Saya</a>
+            <a href="modul-pelajar.html" class="menu-item"><i class="fa-solid fa-book"></i> Modul</a>
         </div>
+        <a onclick="sessionStorage.clear(); window.location.href='login-pelajar.html';" class="menu-item logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
+    </nav>
 
-        <form id="form-daftar-link">
-            <div class="form-group">
-                <label>No. Kad Pengenalan (Tanpa -)</label>
-                <input type="text" id="input-ic" required placeholder="Contoh: 081215085431" maxlength="12" pattern="\d*">
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="welcome-msg">
+                <h1>Bilik Darjah Digital Anda</h1>
+                <p>Urus dan sertai bilik darjah interaktif REAL-MPC.</p>
             </div>
             
-            <div class="form-group">
-                <label>Nama Penuh Pelajar</label>
-                <input type="text" id="input-nama" required placeholder="Sila taip nama penuh anda" style="text-transform: uppercase;">
+            <div class="user-header-card">
+                <i class="fa-solid fa-id-card"></i>
+                <div class="user-info-text">
+                    <span class="user-name" id="papar-nama-pelajar">Memuatkan nama...</span>
+                    <span class="user-ic" id="papar-ic-pelajar">IC: ----------</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="content-grid">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-key" style="color:var(--accent-blue)"></i>Sertai Kelas Baharu</div>
+                <form id="form-join-kod">
+                    <div class="form-group">
+                        <label>Masukkan 5-Digit Kod Kelas</label>
+                        <input type="text" id="input-kod-kelas" required autocomplete="off" placeholder="CONTOH: B3X7P" maxlength="5" style="text-transform: uppercase;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-join"><i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas</button>
+                </form>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="btn-submit">
-                <i class="fa-solid fa-user-plus"></i> Sahkan & Sertai Kelas
-            </button>
-        </form>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-table-cells-large" style="color:var(--accent-blue)"></i> Senarai Kelas Anda
+                </div>
+                
+                <div class="gallery-container" id="galeri-kelas-pelajar">
+                    <div class="gallery-empty">Memuatkan data kelas yang anda sertai...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="modal-detail-kelas">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="md-nama-kelas">Nama Kelas</h2>
+                <button class="modal-close" onclick="tutupModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="meta-detail-box">
+                    <div class="meta-item">
+                        <span class="meta-label">Subjek</span>
+                        <span class="meta-value" id="md-subjek">Memuatkan...</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Kod Kelas</span>
+                        <span class="meta-value" id="md-kod" style="color:#2563eb">-----</span>
+                    </div>
+                </div>
+
+                <div class="section-title"><i class="fa-solid fa-user-group"></i> Rakan Sekelas Berdaftar</div>
+                <ul class="student-list" id="md-senarai-rakan">
+                    </ul>
+
+            </div>
+        </div>
     </div>
 
-    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
@@ -91,93 +243,195 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 1. DAPATKAN KOD KELAS DARI URL (E.g. join-kelas.html?id=B3X7P)
-        const urlParams = new URLSearchParams(window.location.search);
-        const kodKelas = urlParams.get('id') ? urlParams.get('id').toUpperCase() : null;
-
-        if (!kodKelas) {
-            document.getElementById('nama-kelas-papar').innerText = "Pautan tidak sah!";
-            document.getElementById('nama-kelas-papar').style.color = "#ef4444";
-            document.getElementById('btn-submit').disabled = true;
-            alert("Ralat: Kod ID kelas tidak ditemui pada pautan URL.");
-        } else {
-            // Ambil nama kelas untuk paparan info box
-            ambilInfoKelas();
+        // BOX POPUP UNTUK TESTING UTK PILIH IC AKUN MANA NAK TENGOK
+        if (!sessionStorage.getItem("pelajar_ic")) {
+            let icTest = prompt("Sila masukkan No. IC Pelajar untuk simulasi login (Pastikan IC wujud di DB koleksi 'pelajar'):", "081215085431");
+            if (icTest && icTest.trim() !== "") {
+                sessionStorage.setItem("pelajar_ic", icTest.trim());
+            } else {
+                sessionStorage.setItem("pelajar_ic", "081215085431"); 
+            }
         }
+        const icPelajarSemasa = sessionStorage.getItem("pelajar_ic");
 
-        async function ambilInfoKelas() {
+        // FUNGSI BARU: Ambil maklumat profil diri sendiri daripada DB dan letak pada Header Top Bar
+        async function muatProfilHeader() {
             try {
-                const kelasRef = doc(db, "kelas", kodKelas);
-                const kelasSnap = await getDoc(kelasRef);
-                if (kelasSnap.exists()) {
-                    document.getElementById('nama-kelas-papar').innerText = kelasSnap.data().namaKelas;
+                const pelRef = doc(db, "pelajar", icPelajarSemasa);
+                const pelSnap = await getDoc(pelRef);
+                
+                if (pelSnap.exists()) {
+                    const data = pelSnap.data();
+                    const namaPenuh = data.namaPenuh || data.nama || "PELAJAR REAL-MPC";
+                    document.getElementById('papar-nama-pelajar').innerText = namaPenuh;
+                    document.getElementById('papar-ic-pelajar').innerText = `IC: ${icPelajarSemasa}`;
                 } else {
-                    document.getElementById('nama-kelas-papar').innerText = "Kelas tidak wujud!";
-                    document.getElementById('nama-kelas-papar').style.color = "#ef4444";
-                    document.getElementById('btn-submit').disabled = true;
+                    document.getElementById('papar-nama-pelajar').innerText = "Ralat: IC Tiada Di DB";
+                    document.getElementById('papar-ic-pelajar').innerText = `IC: ${icPelajarSemasa}`;
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Gagal muat profil header:", error);
             }
         }
 
-        // 2. LOGIK SEMAKAN KESAPADAN NAMA + IC & SERTAI KELAS
-        document.getElementById('form-daftar-link').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Jalankan fungsi muat profil header
+        muatProfilHeader();
+
+        // 1. REAL-TIME LISTENER SINKRONISASI KELAS
+        function dengarKelasSaya() {
+            const galeriBox = document.getElementById('galeri-kelas-pelajar');
             
-            const inputIC = document.getElementById('input-ic').value.trim();
-            const inputNama = document.getElementById('input-nama').value.trim().toUpperCase();
-            const btnSubmit = document.getElementById('btn-submit');
+            onSnapshot(collection(db, "kelas"), (querySnapshot) => {
+                galeriBox.innerHTML = '';
+                let adaKelas = false;
 
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Menyemak Identiti...`;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const kod = doc.id;
+                    const senaraiPelajar = data.senaraiPelajar || [];
 
-            try {
-                // Rujuk fail pelajar berdasarkan ID dokumen (No IC)
-                const pelajarRef = doc(db, "pelajar", inputIC);
-                const pelajarSnap = await getDoc(pelajarRef);
-
-                // SEKATAN 1: Jika No IC langsung tidak berdaftar dalam DB
-                if (!pelajarSnap.exists()) {
-                    alert("Ralat: No. Kad Pengenalan ini tidak ditemui dalam sistem pendaftaran REAL-MPC. Sila daftar akaun pelajar terlebih dahulu!");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Sahkan & Sertai Kelas`;
-                    return;
-                }
-
-                // Dapatkan nama sebenar dalam DB (terima namaPenuh atau nama)
-                const dataPelajar = pelajarSnap.data();
-                const namaSebenarDB = (dataPelajar.namaPenuh || dataPelajar.nama || "").trim().toUpperCase();
-
-                // SEKATAN 2: Jika IC betul, tapi nama yang ditaip salah / tidak sepadan dengan pemilik IC asal
-                if (inputNama !== namaSebenarDB) {
-                    alert(`Ralat Pengesahan: Nama Penuh yang ditaip tidak sepadan dengan No. IC yang diberikan!\n\nSila pastikan anda memasukkan NAMA PENUH anda sendiri.`);
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Sahkan & Sertai Kelas`;
-                    return;
-                }
-
-                // JIKA LEPAS KEDUA-DUA SEKATAN, BARU UPDATE MASUK KELAS
-                const kelasRef = doc(db, "kelas", kodKelas);
-                await updateDoc(kelasRef, {
-                    senaraiPelajar: arrayUnion(inputIC)
+                    if (senaraiPelajar.includes(icPelajarSemasa)) {
+                        adaKelas = true;
+                        
+                        let divBox = document.createElement('div');
+                        divBox.className = 'class-box';
+                        divBox.innerHTML = `
+                            <div class="class-header">
+                                <span class="class-badge">Kod: ${kod}</span>
+                                <h3>${data.namaKelas}</h3>
+                                <div class="class-subjek"><i class="fa-solid fa-book"></i> ${data.subjek}</div>
+                            </div>
+                            <div class="class-footer">
+                                <div class="teacher-info">
+                                    <i class="fa-solid fa-chalkboard-user"></i> Pengajar REAL-MPC
+                                </div>
+                                <button class="btn-view-class" data-kod="${kod}">
+                                    <i class="fa-solid fa-folder-open"></i> Lihat Kelas
+                                </button>
+                            </div>
+                        `;
+                        galeriBox.appendChild(divBox);
+                    }
                 });
 
-                // Simpan dalam session supaya bila buka dashboard, dia terus kenal pelajar ini
-                sessionStorage.setItem("pelajar_ic", inputIC);
+                if (!adaKelas) {
+                    galeriBox.innerHTML = `<div class="gallery-empty">Tiada rekod kelas disertai untuk IC ini. <br><br>Sila gunakan kod borang atau kod manual untuk daftar.</div>`;
+                }
 
-                alert(`Tahniah ${namaSebenarDB}! Identiti anda disahkan. Anda berjaya didaftarkan ke dalam kelas.`);
-                
-                // Terus bawa mereka ke halaman kelas saya
-                window.location.href = "kelas-pelajar.html";
+                document.querySelectorAll('.btn-view-class').forEach(button => {
+                    button.onclick = function() {
+                        const kodKelas = this.getAttribute('data-kod');
+                        lihatDetailKelas(kodKelas);
+                    };
+                });
+
+            }, (error) => {
+                console.error(error);
+                galeriBox.innerHTML = '<div class="gallery-empty">Gagal memuatkan data.</div>';
+            });
+        }
+
+        dengarKelasSaya();
+
+        // 2. LOGIK MANUAL CODE JOIN
+        document.getElementById('form-join-kod').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputKod = document.getElementById('input-kod-kelas').value.trim().toUpperCase();
+            const btnSubmit = document.getElementById('btn-submit-join');
+
+            if(inputKod.length !== 5) {
+                alert("Sila pastikan kod kelas mengandungi 5 karakter penuh.");
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyertai...`;
+
+            try {
+                const kelasRef = doc(db, "kelas", inputKod);
+                const kelasSnap = await getDoc(kelasRef);
+
+                if (!kelasSnap.exists()) {
+                    alert("Kod kelas tidak ditemui! Sila semak semula.");
+                    return;
+                }
+
+                await updateDoc(kelasRef, {
+                    senaraiPelajar: arrayUnion(icPelajarSemasa)
+                });
+
+                alert(`Berjaya menyertai kelas "${kelasSnap.data().namaKelas}".`);
+                document.getElementById('form-join-kod').reset();
 
             } catch (error) {
-                console.error("Ralat pendaftaran:", error);
-                alert("Sistem mengalami ralat teknikal semasa memproses pengesahan.");
+                console.error(error);
+                alert("Sistem ralat.");
+            } finally {
                 btnSubmit.disabled = false;
-                btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Sahkan & Sertai Kelas`;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sertai Kelas`;
             }
         });
+
+        // 3. FUNGSI LIHAT DETAIL KELAS
+        async function lihatDetailKelas(kodKelas) {
+            document.getElementById('modal-detail-kelas').style.display = 'flex';
+            const listRakan = document.getElementById('md-senarai-rakan');
+            listRakan.innerHTML = '<li style="text-align:center; padding:10px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuatkan...</li>';
+
+            try {
+                const docRef = doc(db, "kelas", kodKelas);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('md-nama-kelas').innerText = data.namaKelas;
+                    document.getElementById('md-subjek').innerText = data.subjek;
+                    document.getElementById('md-kod').innerText = kodKelas;
+
+                    const arrPelajar = data.senaraiPelajar || [];
+                    listRakan.innerHTML = '';
+
+                    if(arrPelajar.length > 0) {
+                        for(let ic of arrPelajar) {
+                            const pelRef = doc(db, "pelajar", ic);
+                            const pelSnap = await getDoc(pelRef);
+                            let namaPapar = ic; 
+
+                            if(pelSnap.exists()) {
+                                namaPapar = pelSnap.data().namaPenuh || pelSnap.data().nama || ic;
+                            }
+
+                            let li = document.createElement('li');
+                            li.className = 'student-item';
+                            if(ic === icPelajarSemasa) {
+                                li.innerHTML = `<i class="fa-solid fa-circle-user" style="color:#2563eb"></i> <span>${namaPapar} <strong>(Anda)</strong></span>`;
+                                li.style.background = "#f0fdf4";
+                            } else {
+                                li.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${namaPapar}</span>`;
+                            }
+                            listRakan.appendChild(li);
+                        }
+                    } else {
+                        listRakan.innerHTML = '<li style="text-align:center;">Hanya anda di dalam kelas ini.</li>';
+                    }
+                }
+            } catch (error) {
+                listRakan.innerHTML = '<li style="text-align:center; color:#ef4444;">Gagal memuatkan.</li>';
+            }
+        }
+    </script>
+
+    <script>
+        function tutupModal() {
+            document.getElementById('modal-detail-kelas').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-detail-kelas');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
 </body>
 </html>
