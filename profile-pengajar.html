@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Pengajar | REAL-MPC</title>
     
+    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -153,7 +154,7 @@
             margin-bottom: 20px;
         }
 
-        .avatar-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+        .avatar-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; word-break: break-word; }
         .avatar-card p { font-size: 0.85rem; color: white; background: var(--primary); padding: 4px 14px; border-radius: 100px; font-weight: 700; text-transform: uppercase; }
 
         /* Details Card Form */
@@ -167,7 +168,7 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 24px;
         }
 
@@ -175,10 +176,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
         }
 
         .form-group label {
@@ -201,7 +198,7 @@
             color: var(--text-muted);
         }
 
-        .input-wrapper input, .input-wrapper select {
+        .input-wrapper input {
             width: 100%;
             padding: 14px 16px 14px 48px;
             border: 2px solid #e2e8f0;
@@ -209,14 +206,20 @@
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
-            background-color: #f8fafc; /* Rupa asal read-only */
+            background-color: #f8fafc;
             outline: none;
         }
 
         /* Gaya semasa mod edit diaktifkan */
-        .input-wrapper input:not([disabled]), .input-wrapper select:not([disabled]) {
+        .input-wrapper input:not([disabled]) {
             background-color: #fff;
             border-color: var(--accent-orange);
+        }
+
+        .input-tip {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
 
         /* --- ACTION BUTTONS --- */
@@ -255,13 +258,12 @@
             .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
             .main-content { width: 100%; margin-left: 0; padding: 20px; }
             .profile-container { grid-template-columns: 1fr; }
-            .form-grid { grid-template-columns: 1fr; }
-            .form-group.full-width { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
 
+    <!-- ================= BAR SISI NAVIGASI ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -291,17 +293,19 @@
         </a>
     </nav>
 
+    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         
         <header class="top-bar">
             <div class="welcome-msg">
                 <h1>Profil Pengajar</h1>
-                <p>Urus dan kemas kini maklumat peribadi serta peranan anda di sini.</p>
+                <p>Urus dan kemas kini maklumat nama serta nombor kad pengenalan anda di sini.</p>
             </div>
         </header>
 
         <section class="profile-container">
             
+            <!-- Kad Kiri: Ringkasan Foto/Nama -->
             <div class="avatar-card">
                 <div class="avatar-box">
                     <i class="fa-solid fa-user-tie"></i>
@@ -310,52 +314,32 @@
                 <p>Pengajar</p>
             </div>
 
+            <!-- Kad Kanan: Borang Butiran Maklumat -->
             <div class="details-card">
                 <form id="form-profil">
                     <div class="form-grid">
                         
-                        <div class="form-group full-width">
+                        <div class="form-group">
                             <label>Nama Penuh Pengajar</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-user"></i>
-                                <input type="text" id="prof-nama" disabled required>
+                                <input type="text" id="prof-nama" disabled required autocomplete="off">
                             </div>
+                            <span class="input-tip">*Ditukar ke HURUF BESAR automatik</span>
                         </div>
 
                         <div class="form-group">
-                            <label>No. Kad Pengenalan (ID Unik)</label>
+                            <label>No. Kad Pengenalan</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="text" id="prof-ic" disabled>
+                                <input type="text" id="prof-ic" maxlength="12" disabled required autocomplete="off">
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Nombor Telefon</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-phone"></i>
-                                <input type="text" id="prof-tel" placeholder="Contoh: 0123456789" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>E-mel Rasmi</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-envelope"></i>
-                                <input type="email" id="prof-email" placeholder="Contoh: nama@email.com" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Subjek Kepakaran</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                                <input type="text" id="prof-subjek" placeholder="Contoh: Sains Termaju / Matematik" disabled>
-                            </div>
+                            <span class="input-tip">*12 digit nombor sahaja (tanpa -)</span>
                         </div>
 
                     </div>
 
+                    <!-- Butang Kawalan Am -->
                     <div class="btn-container">
                         <button type="button" id="btn-ubah" class="btn btn-edit" onclick="aktifkanModEdit()">
                             <i class="fa-solid fa-user-pen"></i> Kemaskini Profil
@@ -376,9 +360,12 @@
 
     </main>
 
+    <!-- ==========================================================================
+         FIREBASE SDK & LOGIK PROFIL
+         ========================================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Konfigurasi Firebase REAL-MPC
         const firebaseConfig = {
@@ -394,69 +381,84 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ambil ID / Nama pengajar yang sedang log masuk dari Session
-        const namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
+        // Ambil nama pengajar semasa dari Session
+        let namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
 
-        // Jika tiada rekod login, tendang balik ke page login
         if (!namaCikguSession) {
             alert("Akses ditolak. Sila log masuk terlebih dahulu.");
             window.location.href = "login-pengajar.html";
         }
 
-        // Panggil data profil sebaik fail dimuatkan
+        // Filter Input Automatik semasa menaip
+        document.getElementById('prof-nama').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+        document.getElementById('prof-ic').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Panggil data profil dari Firestore
         async function dapatkanProfilCikgu() {
             try {
-                // Mencari dokumen pengajar berdasarkan nama penuh (mengikut struktur login sistem sedia ada)
                 const docRef = doc(db, "pengajar", namaCikguSession);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    
-                    // Masukkan data ke dalam input form
                     document.getElementById('side-nama').innerText = data.namaPenuh || namaCikguSession;
                     document.getElementById('prof-nama').value = data.namaPenuh || namaCikguSession;
-                    document.getElementById('prof-ic').value = data.noIC || 'Tiada Data';
-                    document.getElementById('prof-tel').value = data.noTelefon || '';
-                    document.getElementById('prof-email').value = data.emel || '';
-                    document.getElementById('prof-subjek').value = data.subjek || '';
+                    document.getElementById('prof-ic').value = data.noIC || '';
                 } else {
-                    // Jika dokumen belum wujud di Firestore (kes login pertama kali tanpa data tambahan)
                     document.getElementById('side-nama').innerText = namaCikguSession;
                     document.getElementById('prof-nama').value = namaCikguSession;
-                    document.getElementById('prof-ic').value = 'Sila kemas kini';
                 }
             } catch (error) {
                 console.error("Ralat memuatkan profil:", error);
             }
         }
 
-        // Jalankan fungsi bacaan data
         dapatkanProfilCikgu();
 
-        // SIMPAN PERUBAHAN DATA PROFIL KE FIRESTORE
+        // PROSES SIMPAN PERUBAHAN DATA PROFIL
         document.getElementById('form-profil').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const tel = document.getElementById('prof-tel').value.trim();
-            const email = document.getElementById('prof-email').value.trim();
-            const subjek = document.getElementById('prof-subjek').value.trim();
-            const ic = document.getElementById('prof-ic').value.trim();
+            const namaBaru = document.getElementById('prof-nama').value.trim();
+            const icBaru = document.getElementById('prof-ic').value.trim();
+
+            if(icBaru.length !== 12) {
+                alert('Ralat: Sila pastikan No. IC mengandungi tepat 12 digit nombor.');
+                return;
+            }
 
             try {
-                // Update atau Set dokumen pengajar
-                await setDoc(doc(db, "pengajar", namaCikguSession), {
-                    namaPenuh: namaCikguSession,
-                    noIC: ic,
-                    noTelefon: tel,
-                    emel: email,
-                    subjek: subjek,
-                    tarikhKemaskini: new Date().toISOString()
-                }, { merge: true }); // Menggunakan merge: true supaya data sedia ada tidak hilang
+                // Jika nama berubah, kita perlu cipta dokumen baru di bawah key nama baru (kerana nama ialah Document ID)
+                if (namaBaru !== namaCikguSession) {
+                    // Simpan data di dokumen baru
+                    await setDoc(doc(db, "pengajar", namaBaru), {
+                        namaPenuh: namaBaru,
+                        noIC: icBaru,
+                        tarikhKemaskini: new Date().toISOString()
+                    });
+                    
+                    // Padam dokumen lama jika nama telah bertukar
+                    await deleteDoc(doc(db, "pengajar", namaCikguSession));
+                    
+                    // Kemas kini session browser dengan nama baru
+                    sessionStorage.setItem("pengajarLogMasuk", namaBaru);
+                    namaCikguSession = namaBaru;
+                } else {
+                    // Jika nama kekal sama, terus kemas kini data sedia ada
+                    await setDoc(doc(db, "pengajar", namaCikguSession), {
+                        namaPenuh: namaCikguSession,
+                        noIC: icBaru,
+                        tarikhKemaskini: new Date().toISOString()
+                    }, { merge: true });
+                }
 
                 alert("Profil berjaya dikemas kini!");
                 matikanModEdit();
-                dapatkanProfilCikgu(); // Muat semula paparan baharu
+                dapatkanProfilCikgu(); 
             } catch (error) {
                 console.error("Ralat menyimpan data profil:", error);
                 alert("Gagal menyimpan perubahan. Sila cuba lagi.");
@@ -464,12 +466,12 @@
         });
     </script>
 
+    <!-- INTERAKSI MOD EDIT ELEMEN DOM UI -->
     <script>
         function aktifkanModEdit() {
-            // Aktifkan input medan tertentu (Kecuali Nama dan IC yang dikunci sebagai ID rujukan sistem)
-            document.getElementById('prof-tel').disabled = false;
-            document.getElementById('prof-email').disabled = false;
-            document.getElementById('prof-subjek').disabled = false;
+            // Aktifkan input Nama dan IC untuk proses edit
+            document.getElementById('prof-nama').disabled = false;
+            document.getElementById('prof-ic').disabled = false;
 
             // Tukar paparan butang kawalan
             document.getElementById('btn-ubah').style.display = 'none';
@@ -479,9 +481,8 @@
 
         function matikanModEdit() {
             // Kunci semula input medan
-            document.getElementById('prof-tel').disabled = true;
-            document.getElementById('prof-email').disabled = true;
-            document.getElementById('prof-subjek').disabled = true;
+            document.getElementById('prof-nama').disabled = true;
+            document.getElementById('prof-ic').disabled = true;
 
             // Kembalikan paparan butang asal
             document.getElementById('btn-ubah').style.display = 'block';
