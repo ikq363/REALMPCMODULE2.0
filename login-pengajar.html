@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Masuk Pengajar | Modul REAL-MPC</title>
     
-    <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -227,7 +226,6 @@
     <div class="glow-shape glow-2"></div>
 
     <div class="auth-container">
-        <!-- Pautan Balik ke Muka Depan -->
         <a href="index.html" class="back-link">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
         </a>
@@ -238,13 +236,11 @@
             <p id="header-desc">Sila daftar akaun pengajar baharu anda</p>
         </div>
 
-        <!-- TABS PINDAH BORANG -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('daftar')">Daftar</button>
             <button class="tab-btn" onclick="switchTab('login')">Log Masuk</button>
         </div>
 
-        <!-- ================= PANEL DAFTAR ================= -->
         <form id="form-daftar" class="form-panel active">
             <div class="input-group">
                 <label>Nama Penuh</label>
@@ -269,7 +265,6 @@
             </button>
         </form>
 
-        <!-- ================= PANEL LOGIN ================= -->
         <form id="form-login" class="form-panel">
             <div class="input-group">
                 <label>Nama Penuh</label>
@@ -294,13 +289,9 @@
         </form>
     </div>
 
-    <!-- ==========================================================================
-         FIREBASE SDK & LOGIC SCRIPT
-         ========================================================================== -->
     <script type="module">
         // Import Firebase modules yang diperlukan
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Konfigurasi Firebase daripada anda
@@ -316,7 +307,6 @@
 
         // Initialize Firebase & Services
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
         // --- SISTEM PEMFORMATAN AUTOMATIK (INPUT FILTER) ---
@@ -324,15 +314,17 @@
             const nameInput = document.getElementById(nameId);
             const icInput = document.getElementById(icId);
 
-            // Paksa jadi Huruf Besar masa menaip
-            nameInput.addEventListener('input', (e) => {
-                e.target.value = e.target.value.toUpperCase();
-            });
+            if(nameInput && icInput) {
+                // Paksa jadi Huruf Besar masa menaip
+                nameInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
 
-            // Paksa buang sempang/huruf (hanya terima Digit 0-9 sahaja)
-            icInput.addEventListener('input', (e) => {
-                e.target.value = e.target.value.replace(/\D/g, '');
-            });
+                // Paksa buang sempang/huruf (hanya terima Digit 0-9 sahaja)
+                icInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
+            }
         };
 
         // Jalankan tapis pada kedua-dua borang (Daftar & Login)
@@ -353,14 +345,12 @@
             }
 
             try {
-                // Semak dulu jika IC dah pernah berdaftar sebagai pengajar
                 const docRef = doc(db, "pengajar", ic);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     alert('Makluman: No. IC ini sudah pun berdaftar. Sila terus ke tab Log Masuk.');
                 } else {
-                    // Simpan data baharu ke dalam Cloud Firestore
                     await setDoc(doc(db, "pengajar", ic), {
                         namaPenuh: nama,
                         noIC: ic,
@@ -369,7 +359,7 @@
                     });
                     alert('Pendaftaran Berjaya! Akaun pengajar anda telah disimpan. Anda kini boleh log masuk.');
                     document.getElementById('form-daftar').reset();
-                    switchTab('login'); // Tukar tab ke login secara automatik
+                    switchTab('login');
                 }
             } catch (error) {
                 console.error("Ralat simpan data:", error);
@@ -380,28 +370,27 @@
 
         // ================= ACTION: PROSES LOG MASUK =================
         document.getElementById('form-login').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Tahan form daripada terus refresh page asal
 
             const nama = document.getElementById('login-nama').value.trim();
             const ic = document.getElementById('login-ic').value.trim();
 
             try {
-                // Ambil data pengajar dari Firestore berasaskan No. IC (sebagai ID Dokumen)
                 const docRef = doc(db, "pengajar", ic);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Sahkan sama ada Nama Penuh yang ditaip sepadan dengan rekod pendaftaran
                     if(data.namaPenuh === nama) {
-                        alert(`Selamat Datang Cikgu, ${data.namaPenuh}! Log masuk berjaya.`);
-                        
-                        // [KEMAS KINI BAHARU]: Simpan nama dalam sessionStorage browser untuk sistem Auth Guard
+                        // 1. Simpan nama dalam sessionStorage dahulu
                         sessionStorage.setItem("pengajarLogMasuk", data.namaPenuh);
                         
-                        // [KEMAS KINI BAHARU]: Membuka pintu pagar dan halakan terus ke Dashboard Pengajar
-                        window.location.href = "dashboard-pengajar.html"; 
+                        // 2. Beritahu pengajar log masuk berjaya
+                        alert(`Selamat Datang Cikgu, ${data.namaPenuh}! Log masuk berjaya.`);
+                        
+                        // 3. Paksa pelayar berpindah halaman ke dashboard dengan jaminan penuh
+                        window.location.replace("dashboard-pengajar.html");
                     } else {
                         alert('Log Masuk Gagal: Nama Penuh tidak sepadan dengan No. IC yang didaftarkan.');
                     }
