@@ -386,7 +386,7 @@
         import { initializeApp } from "firebase/app";
         import { getFirestore, collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 
-        // Konfigurasi Firebase anda
+        // Konfigurasi Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
             authDomain: "real-mpc-module-6be02.firebaseapp.com",
@@ -401,28 +401,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- AMBIL IC PENGAJAR DARI SESSION STORAGE ---
-        // Cuba dapatkan dari session storage
-        let icPengajar = sessionStorage.getItem("pengajar_ic");
+        // --- AMBIL IC PENGAJAR DARI SESSION STORAGE (DARI LOGIN PAGE) ---
+        const icPengajar = sessionStorage.getItem("pengajar_ic");
         
-        // Jika tiada, minta pengguna masukkan IC
         if (!icPengajar) {
-            icPengajar = prompt("Sila masukkan No. IC Pengajar untuk login:", "881215085431");
-            if (icPengajar && icPengajar.trim() !== "") {
-                sessionStorage.setItem("pengajar_ic", icPengajar.trim());
-                icPengajar = icPengajar.trim();
-            } else {
-                icPengajar = "881215085431"; // Default IC
-                sessionStorage.setItem("pengajar_ic", icPengajar);
-            }
+            // Jika tiada IC, redirect ke login
+            alert("Sesi anda telah tamat. Sila log masuk semula.");
+            window.location.href = "login-pengajar.html";
         }
 
-        console.log("Pengajar IC:", icPengajar);
+        console.log("Pengajar IC dari session:", icPengajar);
 
         // --- 1. FUNGSI MUAT PROFIL PENGAJAR DARI FIRESTORE ---
         async function muatProfilPengajar() {
             try {
-                // Rujuk dokumen pengajar menggunakan IC
                 const pengajarRef = doc(db, "pengajar", icPengajar);
                 const pengajarSnap = await getDoc(pengajarRef);
                 
@@ -442,7 +434,7 @@
                     
                     console.log("Profil pengajar dimuatkan:", namaPenuh);
                 } else {
-                    // Jika tiada rekod di Firestore, gunakan nama dari session atau default
+                    // Jika tiada rekod, gunakan nama dari session
                     const namaFromSession = sessionStorage.getItem("pengajarLogMasuk") || "Pengajar REAL-MPC";
                     document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaFromSession + "!";
                     document.getElementById('paparan-nama-penuh').innerText = namaFromSession;
@@ -496,14 +488,14 @@
         function kiraPelajarPengajar() {
             const pelajarCountElement = document.getElementById('total-pelajar');
             
-            // First, get all classes by this teacher
+            // Query semua kelas oleh pengajar ini
             const kelasQuery = query(
                 collection(db, "kelas"),
                 where("pengajarIC", "==", icPengajar)
             );
 
-            const unsubscribeKelas = onSnapshot(kelasQuery, async (kelasSnapshot) => {
-                // Collect all student ICs from all classes
+            const unsubscribeKelas = onSnapshot(kelasQuery, (kelasSnapshot) => {
+                // Kumpul semua IC pelajar dari semua kelas
                 const allStudentICs = new Set();
                 
                 kelasSnapshot.forEach((doc) => {
@@ -512,7 +504,7 @@
                     senaraiPelajar.forEach(ic => allStudentICs.add(ic));
                 });
 
-                // Update the count
+                // Update count
                 const totalPelajar = allStudentICs.size;
                 pelajarCountElement.innerText = totalPelajar;
                 
@@ -523,7 +515,8 @@
                     pelajarCountElement.style.transform = 'scale(1)';
                 }, 300);
                 
-                console.log("Jumlah pelajar unik:", totalPelajar);
+                console.log("Jumlah pelajar unik dalam kelas pengajar:", totalPelajar);
+                console.log("Senarai IC pelajar:", Array.from(allStudentICs));
                 
             }, (error) => {
                 console.error("Error counting students:", error);
@@ -551,7 +544,7 @@
             }
         };
 
-        console.log("Dashboard pengajar sedia digunakan");
+        console.log("Dashboard pengajar sedia digunakan dengan IC:", icPengajar);
     </script>
 
 </body>
