@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pelajar | REAL-MPC</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Fredoka:wght=600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -13,12 +13,14 @@
             --bg-dark: #0f172a;
             --glass-bg: rgba(255, 255, 255, 0.85);
             --text-dark: #1e293b;
+            --primary: #0f172a;
+            --accent-blue: #2563eb;
             
             /* Palet Warna Cerah & Mesra Murid */
+            --grad-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5100 100%);
             --grad-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
             --grad-indigo: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            --grad-rose: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
         }
 
         * {
@@ -26,34 +28,22 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
         }
 
         body {
-            background-color: #f8fafc;
-            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
-            background-size: 24px 24px;
+            background-color: #f4f7fc;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
         }
 
-        /* --- SFERA CAHAYA LATAR BELAKANG --- */
-        .glow {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.4;
-            z-index: -1;
-        }
-        .glow-1 { top: -50px; right: 10%; width: 350px; height: 350px; background: #06b6d4; }
-        .glow-2 { bottom: 50px; left: 30%; width: 300px; height: 300px; background: #6366f1; }
-
         /* ==========================================================================
-           BAR SISI NAVIGASI PELAJAR (SIDEBAR)
+           BAR SISI NAVIGASI PELAJAR (SIDEBAR - STATIK & KONSISTEN)
            ========================================================================== */
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+            background: linear-gradient(180deg, #0f172a 0%, #0f172a 100%);
             color: white;
             padding: 30px 20px;
             display: flex;
@@ -79,12 +69,12 @@
         }
 
         .logo-area h2 span {
-            color: #06b6d4;
+            color: var(--accent-blue);
         }
 
         .logo-area p {
             font-size: 0.75rem;
-            opacity: 0.7;
+            opacity: 0.6;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-top: 5px;
@@ -98,6 +88,7 @@
             flex-grow: 1;
         }
 
+        /* Menu Item Statik */
         .menu-item {
             display: flex;
             align-items: center;
@@ -108,15 +99,19 @@
             font-weight: 600;
             font-size: 1rem;
             border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Hover Khas Warna Pelajar */
-        .menu-item.m-profile:hover { background: var(--grad-orange); color: white; box-shadow: 0 8px 20px rgba(255, 122, 0, 0.35); transform: translateX(8px); }
-        .menu-item.m-kelas:hover { background: var(--grad-cyan); color: white; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.35); transform: translateX(8px); }
-        .menu-item.m-modul:hover { background: var(--grad-indigo); color: white; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35); transform: translateX(8px); }
+        .menu-item.active {
+            background: var(--grad-blue);
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            transform: translateX(8px);
+        }
 
         .menu-item i {
             font-size: 1.2rem;
@@ -126,14 +121,14 @@
         .logout-btn {
             background: rgba(244, 63, 94, 0.1);
             color: #f43f5e;
-            border: 1px solid rgba(244, 63, 94, 0.2);
+            border: 1px solid rgba(244, 63, 94, 0.1);
             cursor: pointer;
+            margin-top: auto;
         }
         
         .logout-btn:hover {
             background: #f43f5e;
             color: white !important;
-            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
         }
 
         /* ==========================================================================
@@ -147,46 +142,71 @@
         }
 
         .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
-            background: var(--glass-bg);
-            padding: 25px 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            border: 1px solid rgba(255,255,255,0.6);
-            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .welcome-msg h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
-            color: #0f172a;
+            color: var(--primary);
         }
 
         .welcome-msg p {
             color: #64748b;
-            font-size: 0.95rem;
-            margin-top: 4px;
+            font-size: 0.9rem;
+            margin-top: 2px;
+            font-weight: 500;
         }
 
-        .user-profile-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #06b6d4;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+        /* Kad Info Pelajar Aktif di Header */
+        .user-header-card { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 12px 20px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+        }
+        
+        .user-header-card i { 
+            font-size: 1.8rem; 
+            color: var(--accent-blue); 
+            background: #eff6ff; 
+            padding: 10px; 
+            border-radius: 12px; 
+        }
+        
+        .user-info-text { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .user-info-text .user-name { 
+            font-size: 1rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+        }
+        
+        .user-info-text .user-ic { 
+            font-size: 0.8rem; 
+            font-weight: 700; 
+            color: #64748b; 
+            letter-spacing: 0.5px; 
         }
 
         /* ==========================================================================
-           KAD STATISTIK (1 KOTAK JUMLAH KELAS MURID)
+           KAD STATISTIK (Hanya Mengira Kelas Yang Di-Join Sahaja)
            ========================================================================== */
         .stats-grid {
             display: grid;
@@ -202,7 +222,6 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(6, 182, 212, 0.15);
-            transition: transform 0.3s ease;
         }
 
         .stat-card:hover {
@@ -248,11 +267,12 @@
             body { flex-direction: column; }
             .sidebar {
                 width: 100%; min-height: auto; position: relative;
-                padding: 20px; border-radius: 0 0 24px 24px;
+                padding: 20px;
             }
             .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
             .main-content { width: 100%; margin-left: 0; padding: 20px; }
-            .top-bar { flex-direction: column; gap: 15px; text-align: center; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .user-header-card { width: 100%; }
             .stats-grid { grid-template-columns: 1fr; }
         }
 
@@ -264,9 +284,7 @@
 </head>
 <body>
 
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
-
+    <!-- ================= BAR SISI NAVIGASI PELAJAR (Kekal Statik 4 Pilihan) ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -274,52 +292,63 @@
         </div>
 
         <div class="menu-list">
-            <a href="profile-pelajar.html" class="menu-item m-profile">
-                <i class="fa-solid fa-user-graduate"></i> Profile Saya
+            <a href="dashboard-pelajar.html" class="menu-item active">
+                <i class="fa-solid fa-house"></i> Dashboard
             </a>
-            <a href="kelas-pelajar.html" class="menu-item m-kelas">
-                <i class="fa-solid fa-school"></i> Kelas Saya
+            <a href="profile-pelajar.html" class="menu-item">
+                <i class="fa-solid fa-user"></i> Profil Saya
             </a>
-            <a href="modul-pelajar.html" class="menu-item m-modul">
-                <i class="fa-solid fa-book-open"></i> Modul Pembelajaran
+            <a href="kelas-pelajar.html" class="menu-item">
+                <i class="fa-solid fa-graduation-cap"></i> Kelas Saya
+            </a>
+            <a href="modul-pelajar.html" class="menu-item">
+                <i class="fa-solid fa-book"></i> Modul Pembelajaran
             </a>
         </div>
 
-        <a onclick="logoutAkaun()" class="menu-item logout-btn" style="margin-top: 20px;">
+        <a onclick="logoutAkaun()" class="menu-item logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
         </a>
     </nav>
 
+    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         
         <header class="top-bar">
             <div class="welcome-msg">
-                <h1 id="paparan-nama-pelajar">Memuatkan...</h1>
+                <h1 id="paparan-nama-pelajar">Memuatkan nama...</h1>
                 <p>Selamat datang! Sedia untuk meneroka ilmu baharu hari ini?</p>
             </div>
-            <div class="user-profile-badge">
-                <i class="fa-solid fa-star"></i> AKUN PELAJAR
+            
+            <!-- Bahagian Header Profil Pelajar Aktif -->
+            <div class="user-header-card">
+                <i class="fa-solid fa-id-card"></i>
+                <div class="user-info-text">
+                    <span class="user-name" id="header-nama-pelajar">Memuatkan...</span>
+                    <span class="user-ic" id="header-ic-pelajar">IC: ----------</span>
+                </div>
             </div>
         </header>
 
         <section class="stats-grid">
             
+            <!-- KOTAK KIRAAN LIVE: Hanya Papar Kelas Yang Di-Join Sahaja -->
             <div class="stat-card stat-card-kelas">
                 <i class="fa-solid fa-school bg-icon"></i>
                 <p>Jumlah Kelas Disertai</p>
-                <h2 id="total-kelas-pelajar">...</h2>
-                <span><i class="fa-solid fa-circle-check"></i> Status Terkini</span>
+                <h2 id="total-kelas-pelajar">0</h2>
+                <span><i class="fa-solid fa-circle-check"></i> Diikuti Aktif</span>
             </div>
 
         </section>
 
     </main>
 
+    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase REAL-MPC anda
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
             authDomain: "real-mpc-module-6be02.firebaseapp.com",
@@ -330,23 +359,59 @@
             measurementId: "G-XD3VQ7JKKB"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- 1. AMBIL NAMA PELAJAR DARI SESSION ---
-        // Sila pastikan sistem login pelajar anda menetapkan sessionStorage key "pelajarLogMasuk"
-        const namaPelajar = sessionStorage.getItem("pelajarLogMasuk");
-        if (namaPelajar) {
-            document.getElementById('paparan-nama-pelajar').innerText = "Hai, " + namaPelajar + "!";
-        } else {
-            document.getElementById('paparan-nama-pelajar').innerText = "Selamat Datang, Pelajar!";
+        // Simulasi IC Pelajar Semasa dari SessionStorage (Selaras dengan fail kelas-pelajar.html)
+        if (!sessionStorage.getItem("pelajar_ic")) {
+            sessionStorage.setItem("pelajar_ic", "081215085431"); 
         }
+        const icPelajarSemasa = sessionStorage.getItem("pelajar_ic");
 
-        // --- 2. KIRA JUMLAH KELAS SECARA LIVE ---
-        // Mengambil jumlah keseluruhan rekod dalam collection "kelas"
+        // --- 1. AMBIL PROFILE & NAMA PENUH DARI FIRESTORE ---
+        async function muatProfilPelajar() {
+            try {
+                const docRef = doc(db, "pelajar", icPelajarSemasa);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const namaPenuh = data.namaPenuh || data.nama || "Pelajar REAL-MPC";
+                    
+                    // Set paparan teks selamat datang & kad header
+                    document.getElementById('paparan-nama-pelajar').innerText = "Hai, " + namaPenuh + "!";
+                    document.getElementById('header-nama-pelajar').innerText = namaPenuh;
+                    document.getElementById('header-ic-pelajar').innerText = `IC: ${icPelajarSemasa}`;
+                } else {
+                    document.getElementById('paparan-nama-pelajar').innerText = "Selamat Datang, Pelajar!";
+                    document.getElementById('header-nama-pelajar').innerText = "Akaun Tidak Ditemui";
+                    document.getElementById('header-ic-pelajar').innerText = `IC: ${icPelajarSemasa}`;
+                }
+            } catch (error) {
+                console.error("Ralat memuatkan nama profil:", error);
+            }
+        }
+        
+        muatProfilPelajar();
+
+        // --- 2. KIRA JUMLAH KELAS YANG SERTAI SAHAJA (LIVE) ---
+        // Kod ini menapis (filter) secara live untuk mengira dokumen yang mengandungi IC murid di dalam 'senaraiPelajar'
         onSnapshot(collection(db, "kelas"), (snapshot) => {
-            document.getElementById('total-kelas-pelajar').innerText = snapshot.size;
+            let jumlahKelasDisertai = 0;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const senaraiPelajar = data.senaraiPelajar || [];
+                
+                // Jika IC pelajar semasa ada dalam senarai kelas ini, naikkan kiraan
+                if (senaraiPelajar.includes(icPelajarSemasa)) {
+                    jumlahKelasDisertai++;
+                }
+            });
+
+            // Kemas kini nombor pada kotak paparan statistik
+            document.getElementById('total-kelas-pelajar').innerText = jumlahKelasDisertai;
+            
         }, (error) => {
             console.error("Ralat semak kelas pelajar:", error);
             document.getElementById('total-kelas-pelajar').innerText = "0";
@@ -357,7 +422,7 @@
         function logoutAkaun() {
             if(confirm("Adakah anda pasti untuk log keluar daripada akaun pelajar?")) {
                 sessionStorage.clear();
-                window.location.href = "login-pelajar.html"; // Hala balik ke halaman login pelajar anda
+                window.location.href = "login-pelajar.html";
             }
         }
     </script>
