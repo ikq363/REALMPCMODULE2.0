@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktiviti 1: Keazaman Menakluk Persamaan | REAL-MPC Pengajar</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent-blue: #2563eb;
+            --accent-orange: #ff7a00;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --grad-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5100 100%);
+            --grad-green: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            --grad-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f4f7fc; min-height: 100vh; padding: 30px; }
+
+        /* HEADER ATAS */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header-top .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .header-top .back-btn:hover {
+            background: #f1f5f9;
+            transform: translateX(-4px);
+        }
+
+        .header-top .badge-status {
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+        .header-top .badge-status.active { background: #dbeafe; color: #2563eb; }
+        .header-top .badge-status.completed { background: #d1fae5; color: #059669; }
+        .header-top .badge-status.waiting { background: #fef3c7; color: #d97706; }
+
+        /* MAIN CONTENT - FULL WIDTH */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* HEADER INFO */
+        .header-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .header-info .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .header-info .info-item i { color: var(--accent-orange); font-size: 1rem; }
+        .header-info .info-item .label { color: var(--text-muted); font-weight: 500; }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary);
+        }
+
+        .card-title i { color: var(--accent-orange); }
+
+        /* DETAIL AKTIVITI */
+        .activity-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-item { display: flex; flex-direction: column; gap: 4px; }
+        .detail-item .label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+        .detail-item .value { font-size: 1rem; font-weight: 700; color: var(--primary); }
+
+        /* BUTTONS */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: var(--grad-blue); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+
+        .btn-success { background: var(--grad-green); }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+
+        .btn-orange { background: var(--grad-orange); }
+        .btn-orange:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3); }
+
+        .btn-purple { background: var(--grad-purple); }
+        .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3); }
+
+        .btn-pink { background: var(--grad-pink); }
+        .btn-pink:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 63, 94, 0.3); }
+
+        .btn-danger { background: var(--grad-red); }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); }
+
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        /* KELAS SELECTOR */
+        .kelas-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .kelas-selector label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .kelas-selector select {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: white;
+            min-width: 250px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .kelas-selector select:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .status-bar .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .status-bar .status-item i { font-size: 1rem; }
+        .status-bar .status-item .count { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+
+        /* STUDENT LIST */
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .student-chip {
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .student-chip.joined {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .student-chip i { color: #10b981; }
+        .student-chip .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: auto; }
+        .student-chip .status-dot.active { background: #10b981; }
+        .student-chip .status-dot.waiting { background: #f59e0b; }
+
+        /* STEP DISPLAY */
+        .step-container { margin-top: 15px; }
+
+        .step-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+
+        .step-card.active {
+            border-color: var(--accent-blue);
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .step-card.completed {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .step-card.waiting {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            opacity: 0.6;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .step-header h3 { font-size: 1rem; font-weight: 700; color: var(--primary); }
+        .step-timer { font-size: 1.5rem; font-weight: 800; color: var(--accent-orange); font-family: 'Fredoka', sans-serif; }
+
+        .step-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+        .step-status-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 100px;
+            text-transform: uppercase;
+        }
+
+        .step-status-badge.active { background: #dbeafe; color: #2563eb; }
+        .step-status-badge.completed { background: #d1fae5; color: #059669; }
+        .step-status-badge.waiting { background: #f1f5f9; color: #94a3b8; }
+
+        /* PROGRESS BAR */
+        .progress-container { margin-bottom: 20px; }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--grad-orange);
+            transition: width 0.8s ease;
+            border-radius: 100px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ACTION AREA */
+        .action-area {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #e2e8f0;
+        }
+
+        /* HIDDEN */
+        .hidden { display: none !important; }
+
+        /* REFLEKSI SOALAN */
+        .refleksi-soalan {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .refleksi-soalan p { font-weight: 700; margin-bottom: 12px; }
+
+        .refleksi-soalan .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .refleksi-soalan .options .option-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .refleksi-soalan .options .option-item .count-badge {
+            margin-left: auto;
+            background: var(--accent-blue);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .refleksi-soalan .jawapan-text {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            min-height: 50px;
+            border: 1px solid #e2e8f0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .refleksi-soalan .jawapan-text .jawapan-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        .refleksi-soalan .jawapan-text .jawapan-item:last-child { border-bottom: none; }
+        .refleksi-soalan .jawapan-text .jawapan-item .nama { font-weight: 700; color: var(--primary); }
+
+        /* MARKAH SUMMARY */
+        .markah-summary {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
+        }
+
+        .markah-summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .markah-summary th {
+            text-align: left;
+            padding: 8px 12px;
+            background: #f1f5f9;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .markah-summary td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .markah-summary .markah-badge {
+            background: var(--grad-green);
+            color: white;
+            padding: 2px 12px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* SELESAI CARD */
+        .selesai-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .selesai-content i {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+
+        .selesai-content h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .selesai-content p {
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .selesai-content .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .header-top { flex-direction: column; align-items: stretch; }
+            .header-info { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .kelas-selector { flex-direction: column; align-items: stretch; }
+            .kelas-selector select { width: 100%; }
+            .refleksi-soalan .options { grid-template-columns: 1fr; }
+            .step-header { flex-direction: column; align-items: flex-start; }
+            .markah-summary table { font-size: 0.8rem; }
+            .markah-summary th, .markah-summary td { padding: 6px 8px; }
+            .card { padding: 20px; }
+            .status-bar { gap: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .activity-detail-grid { grid-template-columns: 1fr; }
+            .student-grid { grid-template-columns: 1fr; }
+            .header-top .back-btn { justify-content: center; }
+            .btn { width: 100%; justify-content: center; }
+            .action-area .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER ATAS -->
+    <div class="header-top">
+        <a href="modul-pengajar.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Modul
+        </a>
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <h1 style="font-size: 1.3rem; font-weight: 800; color: var(--primary);">
+                <i class="fa-solid fa-flag-checkered" style="color: var(--accent-orange);"></i> Aktiviti 1
+            </h1>
+            <span class="badge-status" id="status-badge"><i class="fa-regular fa-clock"></i> Belum Bermula</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- HEADER INFO -->
+        <div class="header-info" id="header-info">
+            <div class="info-item">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span class="label">Pengajar:</span>
+                <span id="nama-pengajar">Memuatkan...</span>
+            </div>
+            <div class="info-item">
+                <i class="fa-regular fa-clock"></i>
+                <span class="label">Masa:</span>
+                <span id="masa-live">--:--</span>
+            </div>
+            <div class="info-item">
+                <i class="fa-regular fa-calendar"></i>
+                <span class="label">Tarikh:</span>
+                <span id="tarikh-live">--/--/----</span>
+            </div>
+            <div class="info-item" style="margin-left: auto;">
+                <i class="fa-regular fa-users" style="color: var(--accent-blue);"></i>
+                <span id="jumlah-pelajar-sesi" style="color: var(--accent-blue);">Pelajar: 0</span>
+            </div>
+        </div>
+
+        <!-- MAKLUMAT AKTIVITI -->
+        <div class="card" id="detail-aktiviti">
+            <div class="card-title"><i class="fa-solid fa-circle-info"></i> Kawalan Aktiviti</div>
+            <div class="activity-detail-grid">
+                <div class="detail-item">
+                    <span class="label">Mata Pelajaran</span>
+                    <span class="value">Matematik Tambahan Tingkatan 4</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Topik</span>
+                    <span class="value">Persamaan Kuadratik</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Masa</span>
+                    <span class="value">60 minit</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Submodul Karakter</span>
+                    <span class="value">Daya Tahan (Resilience)</span>
+                </div>
+            </div>
+
+            <!-- Pilih Kelas -->
+            <div class="kelas-selector" id="kelas-selector">
+                <label for="pilih-kelas"><i class="fa-solid fa-school"></i> Pilih Kelas:</label>
+                <select id="pilih-kelas">
+                    <option value="">-- Sila Pilih Kelas --</option>
+                </select>
+                <span id="kelas-status" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+                <button class="btn btn-success" id="btn-mula-aktiviti" disabled>
+                    <i class="fa-solid fa-play"></i> Mula Aktiviti
+                </button>
+            </div>
+        </div>
+
+        <!-- SENARAI PELAJAR -->
+        <div class="card hidden" id="pelajar-card">
+            <div class="card-title"><i class="fa-solid fa-user-graduate"></i> Senarai Pelajar</div>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <i class="fa-solid fa-user-plus" style="color: var(--accent-blue);"></i>
+                    <span>Jumlah Pelajar: <span class="count" id="count-pelajar-total">0</span></span>
+                </div>
+                <div class="status-item">
+                    <i class="fa-solid fa-clock" style="color: var(--accent-orange);"></i>
+                    <span>Masa: <span class="count" id="count-masa">00:00</span></span>
+                </div>
+                <div class="status-item">
+                    <i class="fa-solid fa-layer-group" style="color: #a855f7;"></i>
+                    <span>Langkah: <span class="count" id="count-langkah">0/5</span></span>
+                </div>
+            </div>
+
+            <div class="student-grid" id="senarai-pelajar"></div>
+        </div>
+
+        <!-- SESI AKTIVITI -->
+        <div class="card hidden" id="sesi-aktiviti">
+            <div class="card-title"><i class="fa-solid fa-clock"></i> Sesi Aktiviti</div>
+
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+                </div>
+                <div class="progress-label">
+                    <span id="progress-label-start">Belum Bermula</span>
+                    <span id="progress-label-end">Selesai</span>
+                </div>
+            </div>
+
+            <div class="step-container" id="step-container"></div>
+
+            <div class="action-area">
+                <button class="btn btn-success hidden" id="btn-selesai-awal">
+                    <i class="fa-solid fa-check-double"></i> Selesai Awal
+                </button>
+                <button class="btn btn-primary hidden" id="btn-step-seterusnya">
+                    <i class="fa-solid fa-arrow-right"></i> Seterusnya
+                </button>
+                <button class="btn btn-pink hidden" id="btn-tamat-aktiviti">
+                    <i class="fa-solid fa-flag-checkered"></i> Tamat & Refleksi
+                </button>
+                <button class="btn btn-danger" id="btn-henti-aktiviti">
+                    <i class="fa-solid fa-stop"></i> Henti Aktiviti
+                </button>
+            </div>
+        </div>
+
+        <!-- REFLEKSI -->
+        <div class="card hidden" id="refleksi-card">
+            <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> Refleksi Karakter Murid (Daya Tahan)</div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Arahan kepada murid: Sila jawab soalan berikut dengan jujur. Tiada jawapan betul atau salah.</p>
+
+            <!-- Soalan 1 -->
+            <div class="refleksi-soalan">
+                <p>1. Apa yang anda lakukan pertama kali apabila anda tidak faham soalan persamaan kuadratik?</p>
+                <div class="options">
+                    <div class="option-item">🟢 Berhenti dan biarkan kosong <span class="count-badge" id="q1_0">0</span></div>
+                    <div class="option-item">🔵 Cuba baca soalan sekali lagi <span class="count-badge" id="q1_1">0</span></div>
+                    <div class="option-item">🟡 Rujuk nota / contoh <span class="count-badge" id="q1_2">0</span></div>
+                    <div class="option-item">🟣 Tanya rakan / guru <span class="count-badge" id="q1_3">0</span></div>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-users"></i> <span id="jawapan-q1-total">0</span> pelajar telah menjawab
+                </div>
+            </div>
+
+            <!-- Soalan 2 -->
+            <div class="refleksi-soalan">
+                <p>2. Semasa "Cabaran Tekad Kuadratik", adakah anda…</p>
+                <div class="options">
+                    <div class="option-item">🔴 Cepat rasa putus asa <span class="count-badge" id="q2_0">0</span></div>
+                    <div class="option-item">🟠 Rasa susah, tetapi masih mencuba <span class="count-badge" id="q2_1">0</span></div>
+                    <div class="option-item">🟢 Terus mencuba sehingga selesai <span class="count-badge" id="q2_2">0</span></div>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-users"></i> <span id="jawapan-q2-total">0</span> pelajar telah menjawab
+                </div>
+            </div>
+
+            <!-- Soalan 3 -->
+            <div class="refleksi-soalan">
+                <p>3. Tulis satu strategi yang anda akan gunakan selepas ini apabila berhadapan soalan Matematik Tambahan yang sukar:</p>
+                <div class="jawapan-text" id="jawapan-q3">
+                    <p style="color: var(--text-muted); font-style: italic;">Menunggu jawapan pelajar...</p>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-users"></i> <span id="jawapan-q3-total">0</span> pelajar telah menjawab
+                </div>
+            </div>
+
+            <!-- Soalan 4 -->
+            <div class="refleksi-soalan">
+                <p>4. Satu ayat untuk menggambarkan perasaan anda selepas berjaya menyelesaikan soalan sukar hari ini:</p>
+                <div class="jawapan-text" id="jawapan-q4">
+                    <p style="color: var(--text-muted); font-style: italic;">Menunggu jawapan pelajar...</p>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-users"></i> <span id="jawapan-q4-total">0</span> pelajar telah menjawab
+                </div>
+            </div>
+
+            <!-- Markah Summary -->
+            <div class="markah-summary">
+                <p style="font-weight: 700; margin-bottom: 12px;">📊 Ringkasan Markah Pelajar</p>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bil</th>
+                                <th>Nama Pelajar</th>
+                                <th>Markah</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="markah-table-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted);">Menunggu pelajar menghantar markah...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-users"></i> <span id="jawapan-markah-total">0</span> pelajar telah menghantar markah
+                </div>
+            </div>
+        </div>
+
+        <!-- SELESAI -->
+        <div class="card hidden" id="selesai-card">
+            <div class="selesai-content">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Aktiviti Selesai! 🎉</h2>
+                <p>Aktiviti 1: Keazaman Menakluk Persamaan telah selesai. Semua pelajar telah melengkapkan refleksi mereka.</p>
+                <div class="btn-group">
+                    <a href="modul-pengajar.html" class="btn btn-primary">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Modul
+                    </a>
+                    <button class="btn btn-success" id="btn-export-data">
+                        <i class="fa-solid fa-file-export"></i> Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, query, where, onSnapshot, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+
+        // ===================== FIREBASE CONFIG =====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ===================== STATE =====================
+        let currentStep = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let isAktivitiActive = false;
+        let selectedClass = null;
+        let pengajarIC = sessionStorage.getItem("pengajar_ic") || "881215085431";
+        let pengajarNama = "";
+        let pelajarList = [];
+
+        // ===================== DATA AKTIVITI =====================
+        const aktivitiData = {
+            id: "aktiviti_1",
+            nama: "Keazaman Menakluk Persamaan",
+            steps: [
+                {
+                    id: 1,
+                    masa: "15–25 minit",
+                    aktivitiMurid: "Menyelesaikan item 1–3 (tahap mudah → sederhana) secara individu. Rujuk nota & bertanya rakan apabila buntu.",
+                    durasi: 10
+                },
+                {
+                    id: 2,
+                    masa: "25–35 minit",
+                    aktivitiMurid: "Membandingkan jawapan sendiri dengan jawapan yang dibincang. Membetulkan kesilapan dan menanda soalan yang belum dikuasai.",
+                    durasi: 10
+                },
+                {
+                    id: 3,
+                    masa: "35–50 minit",
+                    aktivitiMurid: "5 minit: mencuba sendiri di buku. 10 minit: berbincang dalam kumpulan (3–4 orang) untuk mencapai jawapan terbaik, membandingkan kaedah masing-masing. Menulis langkah akhir yang dipersetujui.",
+                    durasi: 15
+                },
+                {
+                    id: 4,
+                    masa: "50–55 minit",
+                    aktivitiMurid: "Menyemak jawapan. Mengajukan soalan jika masih keliru. Menyatakan (secara sukarela) apakah bahagian yang paling sukar.",
+                    durasi: 5
+                },
+                {
+                    id: 5,
+                    masa: "55–60 minit",
+                    aktivitiMurid: "Menjawab soalan refleksi secara individu. Menyerahkan kertas refleksi / simpan dalam fail portfolio.",
+                    durasi: 5
+                }
+            ]
+        };
+
+        // ===================== DOM ELEMENTS =====================
+        const btnMula = document.getElementById('btn-mula-aktiviti');
+        const btnNext = document.getElementById('btn-step-seterusnya');
+        const btnSelesaiAwal = document.getElementById('btn-selesai-awal');
+        const btnTamat = document.getElementById('btn-tamat-aktiviti');
+        const btnHenti = document.getElementById('btn-henti-aktiviti');
+        const btnExport = document.getElementById('btn-export-data');
+        const selectKelas = document.getElementById('pilih-kelas');
+
+        const statusBadge = document.getElementById('status-badge');
+        const pelajarCard = document.getElementById('pelajar-card');
+        const sesiCard = document.getElementById('sesi-aktiviti');
+        const refleksiCard = document.getElementById('refleksi-card');
+        const selesaiCard = document.getElementById('selesai-card');
+        const stepContainer = document.getElementById('step-container');
+        const progressBar = document.getElementById('progress-bar');
+        const kelasStatus = document.getElementById('kelas-status');
+
+        const countPelajarTotal = document.getElementById('count-pelajar-total');
+        const countMasa = document.getElementById('count-masa');
+        const countLangkah = document.getElementById('count-langkah');
+        const jumlahPelajarSesi = document.getElementById('jumlah-pelajar-sesi');
+
+        const namaPengajarEl = document.getElementById('nama-pengajar');
+        const masaLiveEl = document.getElementById('masa-live');
+        const tarikhLiveEl = document.getElementById('tarikh-live');
+
+        // ===================== FUNGSI =====================
+
+        function setMasaTarikh() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const date = now.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            masaLiveEl.textContent = time;
+            tarikhLiveEl.textContent = date;
+            
+            setInterval(() => {
+                const now2 = new Date();
+                masaLiveEl.textContent = now2.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }, 1000);
+        }
+
+        async function loadPengajarProfile() {
+            try {
+                const pengRef = doc(db, "pengajar", pengajarIC);
+                const pengSnap = await getDoc(pengRef);
+                if (pengSnap.exists()) {
+                    const data = pengSnap.data();
+                    pengajarNama = data.namaPenuh || data.nama || "Pengajar";
+                    namaPengajarEl.textContent = pengajarNama;
+                } else {
+                    namaPengajarEl.textContent = "Pengajar REAL-MPC";
+                }
+            } catch (error) {
+                console.error("Error loading teacher:", error);
+                namaPengajarEl.textContent = "Pengajar REAL-MPC";
+            }
+        }
+
+        function loadKelasPengajar() {
+            const kelasQuery = query(
+                collection(db, "kelas"),
+                where("pengajarIC", "==", pengajarIC)
+            );
+
+            onSnapshot(kelasQuery, (snapshot) => {
+                selectKelas.innerHTML = '<option value="">-- Sila Pilih Kelas --</option>';
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const kelasId = doc.id;
+                    const namaKelas = data.namaKelas || `Kelas ${kelasId}`;
+                    
+                    const option = document.createElement('option');
+                    option.value = kelasId;
+                    option.textContent = `${namaKelas} (${data.subjek || 'Tiada subjek'})`;
+                    selectKelas.appendChild(option);
+                });
+
+                if (snapshot.size === 0) {
+                    kelasStatus.textContent = "⚠️ Anda belum mencipta sebarang kelas";
+                    btnMula.disabled = true;
+                } else {
+                    kelasStatus.textContent = `✅ ${snapshot.size} kelas ditemui`;
+                }
+            }, (error) => {
+                console.error("Error loading classes:", error);
+                kelasStatus.textContent = "❌ Gagal memuatkan kelas";
+            });
+        }
+
+        selectKelas.addEventListener('change', function() {
+            selectedClass = this.value;
+            if (selectedClass) {
+                const kelasName = selectKelas.options[selectKelas.selectedIndex].text;
+                kelasStatus.textContent = `✅ Kelas dipilih: ${kelasName}`;
+                btnMula.disabled = false;
+                loadPelajarKelas(selectedClass);
+            } else {
+                kelasStatus.textContent = "⚠️ Sila pilih kelas";
+                btnMula.disabled = true;
+                pelajarCard.classList.add('hidden');
+            }
+        });
+
+        function loadPelajarKelas(kelasId) {
+            const kelasRef = doc(db, "kelas", kelasId);
+            
+            onSnapshot(kelasRef, async (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const senaraiIC = data.senaraiPelajar || [];
+                    
+                    pelajarList = [];
+                    for (const ic of senaraiIC) {
+                        try {
+                            const pelRef = doc(db, "pelajar", ic);
+                            const pelSnap = await getDoc(pelRef);
+                            if (pelSnap.exists()) {
+                                const pelData = pelSnap.data();
+                                pelajarList.push({
+                                    ic: ic,
+                                    nama: pelData.namaPenuh || pelData.nama || ic,
+                                    status: 'waiting'
+                                });
+                            } else {
+                                pelajarList.push({ ic: ic, nama: ic, status: 'waiting' });
+                            }
+                        } catch (error) {
+                            console.error("Error loading student:", error);
+                            pelajarList.push({ ic: ic, nama: ic, status: 'waiting' });
+                        }
+                    }
+                    
+                    updatePelajarList();
+                    pelajarCard.classList.remove('hidden');
+                    countPelajarTotal.innerText = pelajarList.length;
+                    jumlahPelajarSesi.innerText = `Pelajar: ${pelajarList.length}`;
+                }
+            }, (error) => {
+                console.error("Error loading class students:", error);
+            });
+        }
+
+        function updatePelajarList() {
+            const container = document.getElementById('senarai-pelajar');
+            container.innerHTML = '';
+            
+            pelajarList.forEach(p => {
+                const chip = document.createElement('div');
+                chip.className = `student-chip ${p.status === 'joined' ? 'joined' : ''}`;
+                chip.innerHTML = `
+                    <i class="fa-solid fa-user"></i>
+                    ${p.nama}
+                    <span class="status-dot ${p.status === 'joined' ? 'active' : 'waiting'}"></span>
+                `;
+                container.appendChild(chip);
+            });
+        }
+
+        function mulaAktiviti() {
+            if (!selectedClass) {
+                alert('Sila pilih kelas terlebih dahulu.');
+                return;
+            }
+
+            isAktivitiActive = true;
+            currentStep = 0;
+            btnMula.disabled = true;
+            btnMula.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bermula...';
+            
+            updateAktivitiStatus('active');
+            
+            setTimeout(() => {
+                btnMula.classList.add('hidden');
+                sesiCard.classList.remove('hidden');
+                statusBadge.className = 'badge-status active';
+                statusBadge.innerHTML = '<i class="fa-solid fa-play"></i> Sedang Berjalan';
+                
+                renderStep(currentStep);
+                startTimer(aktivitiData.steps[currentStep].durasi);
+            }, 1000);
+        }
+
+        async function updateAktivitiStatus(status) {
+            try {
+                const aktivitiRef = doc(db, "aktiviti", aktivitiData.id);
+                await setDoc(aktivitiRef, {
+                    status: status,
+                    kelasId: selectedClass,
+                    pengajarIC: pengajarIC,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (error) {
+                console.error("Error updating activity status:", error);
+            }
+        }
+
+        function renderStep(index) {
+            const step = aktivitiData.steps[index];
+            const totalSteps = aktivitiData.steps.length;
+            
+            stepContainer.innerHTML = '';
+            progressBar.style.width = `${((index) / totalSteps) * 100}%`;
+            countLangkah.innerText = `${index + 1}/${totalSteps}`;
+
+            aktivitiData.steps.forEach((s, i) => {
+                const div = document.createElement('div');
+                let statusClass = 'waiting';
+                let statusText = 'Menunggu';
+                
+                if (i < index) {
+                    statusClass = 'completed';
+                    statusText = 'Selesai ✅';
+                } else if (i === index) {
+                    statusClass = 'active';
+                    statusText = 'Aktif 🔵';
+                }
+                
+                div.className = `step-card ${statusClass}`;
+                div.innerHTML = `
+                    <div class="step-header">
+                        <h3>${i + 1}. ${s.masa}</h3>
+                        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                            ${i === index ? `<span class="step-timer" id="step-timer">${s.durasi}:00</span>` : ''}
+                            <span class="step-status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                    <div class="step-desc">${s.aktivitiMurid}</div>
+                `;
+                stepContainer.appendChild(div);
+            });
+
+            if (index === totalSteps - 1) {
+                btnNext.classList.add('hidden');
+                btnSelesaiAwal.classList.add('hidden');
+                btnTamat.classList.remove('hidden');
+            } else {
+                btnNext.classList.add('hidden');
+                btnSelesaiAwal.classList.remove('hidden');
+                btnTamat.classList.add('hidden');
+            }
+        }
+
+        function startTimer(durasi) {
+            clearInterval(timerInterval);
+            timeLeft = durasi * 60;
+            
+            const timerElement = document.getElementById('step-timer');
+            if (!timerElement) return;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerElement.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                countMasa.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    nextStep();
+                }
+            }, 1000);
+        }
+
+        function nextStep() {
+            clearInterval(timerInterval);
+            
+            if (currentStep < aktivitiData.steps.length - 1) {
+                currentStep++;
+                renderStep(currentStep);
+                startTimer(aktivitiData.steps[currentStep].durasi);
+            } else {
+                tamatAktiviti();
+            }
+        }
+
+        function tamatAktiviti() {
+            isAktivitiActive = false;
+            clearInterval(timerInterval);
+            
+            sesiCard.classList.add('hidden');
+            refleksiCard.classList.remove('hidden');
+            statusBadge.className = 'badge-status';
+            statusBadge.innerHTML = '<i class="fa-solid fa-pen"></i> Refleksi';
+            
+            progressBar.style.width = '100%';
+            countLangkah.innerText = '5/5 ✅';
+            
+            updateAktivitiStatus('refleksi');
+            dengarJawapanPelajar();
+        }
+
+        function dengarJawapanPelajar() {
+            const jawapanRef = collection(db, "aktiviti", aktivitiData.id, "jawapan");
+            
+            onSnapshot(jawapanRef, (snapshot) => {
+                const counts = { q1: {0:0,1:0,2:0,3:0}, q2: {0:0,1:0,2:0} };
+                let q3Answers = [];
+                let q4Answers = [];
+                let markahData = [];
+                let totalJawapan = 0;
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    totalJawapan++;
+                    
+                    if (data.q1 !== undefined) counts.q1[data.q1] = (counts.q1[data.q1] || 0) + 1;
+                    if (data.q2 !== undefined) counts.q2[data.q2] = (counts.q2[data.q2] || 0) + 1;
+                    if (data.q3) q3Answers.push({ nama: data.namaPelajar || doc.id, jawapan: data.q3 });
+                    if (data.q4) q4Answers.push({ nama: data.namaPelajar || doc.id, jawapan: data.q4 });
+                    if (data.markah !== undefined) markahData.push({ nama: data.namaPelajar || doc.id, markah: data.markah });
+                });
+
+                for (let i = 0; i <= 3; i++) document.getElementById(`q1_${i}`).textContent = counts.q1[i] || 0;
+                document.getElementById('jawapan-q1-total').textContent = totalJawapan;
+
+                for (let i = 0; i <= 2; i++) document.getElementById(`q2_${i}`).textContent = counts.q2[i] || 0;
+                document.getElementById('jawapan-q2-total').textContent = totalJawapan;
+
+                const q3Container = document.getElementById('jawapan-q3');
+                if (q3Answers.length > 0) {
+                    q3Container.innerHTML = q3Answers.map(a => 
+                        `<div class="jawapan-item"><span class="nama">${a.nama}:</span> ${a.jawapan}</div>`
+                    ).join('');
+                } else {
+                    q3Container.innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Menunggu jawapan pelajar...</p>';
+                }
+                document.getElementById('jawapan-q3-total').textContent = q3Answers.length;
+
+                const q4Container = document.getElementById('jawapan-q4');
+                if (q4Answers.length > 0) {
+                    q4Container.innerHTML = q4Answers.map(a => 
+                        `<div class="jawapan-item"><span class="nama">${a.nama}:</span> ${a.jawapan}</div>`
+                    ).join('');
+                } else {
+                    q4Container.innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Menunggu jawapan pelajar...</p>';
+                }
+                document.getElementById('jawapan-q4-total').textContent = q4Answers.length;
+
+                const markahBody = document.getElementById('markah-table-body');
+                if (markahData.length > 0) {
+                    markahBody.innerHTML = markahData.map((m, i) => `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${m.nama}</td>
+                            <td><span class="markah-badge">${m.markah}</span></td>
+                            <td>✅ Telah hantar</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    markahBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--text-muted);">Menunggu pelajar menghantar markah...</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById('jawapan-markah-total').textContent = markahData.length;
+
+                if (markahData.length >= pelajarList.length && pelajarList.length > 0) {
+                    setTimeout(() => {
+                        if (!document.getElementById('selesai-card').classList.contains('hidden')) return;
+                        if (confirm('Semua pelajar telah menghantar refleksi. Tamatkan aktiviti?')) {
+                            refleksiCard.classList.add('hidden');
+                            selesaiCard.classList.remove('hidden');
+                            statusBadge.className = 'badge-status completed';
+                            statusBadge.innerHTML = '<i class="fa-solid fa-check-circle"></i> Selesai';
+                            updateAktivitiStatus('completed');
+                        }
+                    }, 3000);
+                }
+            }, (error) => {
+                console.error("Error listening to answers:", error);
+            });
+        }
+
+        function hentiAktiviti() {
+            if (!isAktivitiActive) {
+                alert('Aktiviti tidak sedang berjalan.');
+                return;
+            }
+            
+            if (confirm('Adakah anda pasti mahu menghentikan aktiviti?\n\nPelajar akan terputus dari sesi ini.')) {
+                clearInterval(timerInterval);
+                isAktivitiActive = false;
+                statusBadge.className = 'badge-status waiting';
+                statusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Dihentikan';
+                
+                sesiCard.classList.add('hidden');
+                btnMula.classList.remove('hidden');
+                btnMula.disabled = false;
+                btnMula.innerHTML = '<i class="fa-solid fa-play"></i> Mula Aktiviti';
+                
+                updateAktivitiStatus('stopped');
+                alert('Aktiviti telah dihentikan.');
+            }
+        }
+
+        function exportData() {
+            alert('Data telah dieksport ke console (F12).');
+            console.log('=== DATA AKTIVITI ===');
+            console.log('Kelas:', selectedClass);
+            console.log('Pelajar:', pelajarList);
+            console.log('Jawapan:', 'Akan datang');
+        }
+
+        // ===================== EVENT LISTENERS =====================
+        btnMula.addEventListener('click', mulaAktiviti);
+        btnSelesaiAwal.addEventListener('click', () => {
+            if (confirm('Adakah anda pasti semua pelajar telah selesai?')) {
+                clearInterval(timerInterval);
+                nextStep();
+            }
+        });
+        btnNext.addEventListener('click', () => {
+            if (confirm('Pastikan semua pelajar telah selesai langkah ini?')) {
+                clearInterval(timerInterval);
+                nextStep();
+            }
+        });
+        btnTamat.addEventListener('click', () => {
+            if (confirm('Tamatkan aktiviti dan beralih ke refleksi?')) {
+                clearInterval(timerInterval);
+                tamatAktiviti();
+            }
+        });
+        btnHenti.addEventListener('click', hentiAktiviti);
+        btnExport.addEventListener('click', exportData);
+
+        // ===================== INIT =====================
+        setMasaTarikh();
+        loadPengajarProfile();
+        loadKelasPengajar();
+
+        // Check existing activity
+        const aktivitiRef = doc(db, "aktiviti", aktivitiData.id);
+        onSnapshot(aktivitiRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.status === 'active' || data.status === 'refleksi') {
+                    statusBadge.className = 'badge-status active';
+                    statusBadge.innerHTML = '<i class="fa-solid fa-play"></i> Sedang Berjalan';
+                    
+                    if (data.kelasId) {
+                        selectKelas.value = data.kelasId;
+                        selectedClass = data.kelasId;
+                        btnMula.classList.add('hidden');
+                        pelajarCard.classList.remove('hidden');
+                        sesiCard.classList.remove('hidden');
+                        loadPelajarKelas(data.kelasId);
+                        
+                        if (data.status === 'refleksi') {
+                            sesiCard.classList.add('hidden');
+                            refleksiCard.classList.remove('hidden');
+                            dengarJawapanPelajar();
+                        }
+                    }
+                }
+            }
+        });
+
+        console.log('Aktiviti 1: Keazaman Menakluk Persamaan - Halaman Pengajar sedia!');
+    </script>
+</body>
+</html>
