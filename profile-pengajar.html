@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Pengajar | REAL-MPC</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght Benefic;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -86,7 +85,7 @@
         }
 
         .menu-item.active { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
-        .menu-item.m-profile:hover { background: var(--grad-pink); color: white; transform: translateX(8px); }
+        .menu-item:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(8px); }
         .menu-item i { font-size: 1.2rem; width: 25px; }
 
         .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); cursor: pointer; }
@@ -255,7 +254,6 @@
 </head>
 <body>
 
-    <!-- ================= BAR SISI NAVIGASI ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -263,19 +261,19 @@
         </div>
 
         <div class="menu-list">
-            <a href="dashboard-pengajar.html" class="menu-item m-dashboard" style="color: rgba(255,255,255,0.7);">
+            <a href="dashboard-pengajar.html" class="menu-item">
                 <i class="fa-solid fa-chart-line"></i> Dashboard
             </a>
-            <a href="profile-pengajar.html" class="menu-item m-profile active">
+            <a href="profile-pengajar.html" class="menu-item active">
                 <i class="fa-solid fa-id-card-clip"></i> Profile
             </a>
-            <a href="kelas-pengajar.html" class="menu-item m-kelas" style="color: rgba(255,255,255,0.7);">
+            <a href="kelas-pengajar.html" class="menu-item">
                 <i class="fa-solid fa-school"></i> Kelas Saya
             </a>
-            <a href="modul-pengajar.html" class="menu-item m-modul" style="color: rgba(255,255,255,0.7);">
+            <a href="modul-pengajar.html" class="menu-item">
                 <i class="fa-solid fa-book-open-reader"></i> Modul
             </a>
-            <a href="analisis-pengajar.html" class="menu-item m-analisis" style="color: rgba(255,255,255,0.7);">
+            <a href="analisis-pengajar.html" class="menu-item">
                 <i class="fa-solid fa-chart-pie"></i> Analisis
             </a>
         </div>
@@ -285,17 +283,15 @@
         </a>
     </nav>
 
-    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         <header class="top-bar">
             <div class="welcome-msg">
                 <h1>Profil Pengajar</h1>
-                <p>Uruskan maklumat akaun pendaftaran anda di sini.</p>
+                <p>Paparan maklumat profil rasmi anda yang telah didaftarkan.</p>
             </div>
         </header>
 
         <section class="profile-container">
-            <!-- Kad Kiri: Paparan Nama -->
             <div class="avatar-card">
                 <div class="avatar-box">
                     <i class="fa-solid fa-user-tie"></i>
@@ -304,7 +300,6 @@
                 <p>Pengajar</p>
             </div>
 
-            <!-- Kad Kanan: Form Paparan/Kemas Kini -->
             <div class="details-card">
                 <form id="form-profil">
                     <div class="form-grid">
@@ -340,7 +335,6 @@
         </section>
     </main>
 
-    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -358,49 +352,52 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ambil ID No. IC yang disimpan semasa cikgu mula-mula log masuk
-        let icCikguSession = sessionStorage.getItem("pengajarIC");
+        // Ambil data dari session storage (Sistem terima apa-apa sahaja rujukan login sedia ada)
         let namaCikguSession = sessionStorage.getItem("pengajarLogMasuk");
+        let icCikguSession = sessionStorage.getItem("pengajarIC");
 
-        // Jika data tiada dalam session, bermakna belum log masuk
-        if (!icCikguSession) {
-            alert("Akses ditolak. Sila log masuk semula.");
+        // Jika dua-dua tiada, barulah dikira belum login langsung
+        if (!namaCikguSession && !icCikguSession) {
+            alert("Sila log masuk terlebih dahulu.");
             window.location.href = "login-pengajar.html";
         }
+
+        // Tentukan ID Dokumen yang akan dipanggil (Guna IC jika ada, jika tiada guna Nama)
+        let documentID = icCikguSession ? icCikguSession : namaCikguSession;
 
         // Auto-format huruf besar semasa mengedit nama
         document.getElementById('prof-nama').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
         });
 
-        // AMBIL DATA REKOD ASAL DARI FIREBASE (Berdasarkan ID No. IC)
+        // AMBIL REKOD DATA ASAL DARI FIREBASE MASA DAFTAR MULA-MULA
         async function ambilDataAsal() {
             try {
-                const docRef = doc(db, "pengajar", icCikguSession);
+                const docRef = doc(db, "pengajar", documentID);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Paparkan data pendaftaran asal ke skrin
-                    document.getElementById('side-nama').innerText = data.namaPenuh;
-                    document.getElementById('prof-nama').value = data.namaPenuh;
-                    document.getElementById('prof-ic').value = data.noIC;
+                    // Masukkan data pendaftaran asal yang betul ke dalam input text
+                    document.getElementById('side-nama').innerText = data.namaPenuh || data.nama || documentID;
+                    document.getElementById('prof-nama').value = data.namaPenuh || data.nama || documentID;
+                    document.getElementById('prof-ic').value = data.noIC || data.ic || '';
                 } else {
-                    // Jika data tiada dalam koleksi IC, guna data back-up dari session pendaftaran awal
-                    document.getElementById('side-nama').innerText = namaCikguSession;
-                    document.getElementById('prof-nama').value = namaCikguSession;
-                    document.getElementById('prof-ic').value = icCikguSession;
+                    // Backup jika tiada dokumen padanan langsung dalam database
+                    document.getElementById('side-nama').innerText = namaCikguSession || "PENGANJAR";
+                    document.getElementById('prof-nama').value = namaCikguSession || "";
+                    document.getElementById('prof-ic').value = icCikguSession || "";
                 }
             } catch (error) {
-                console.error("Ralat membaca data:", error);
+                console.error("Ralat membaca data Firebase:", error);
             }
         }
 
-        // Jalankan fungsi bacaan data pendaftaran awal
+        // Jalankan fungsi
         ambilDataAsal();
 
-        // KEMAS KINI DOKUMEN YANG SAMA (TIDAK AKAN MENINDIH ATAU MEMBUAT DATA BARU)
+        // SIMPAN PERUBAHAN SECARA TERUS KEPADA DOKUMEN ASAL (TIADA DOUBLE DATA)
         document.getElementById('form-profil').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -408,34 +405,31 @@
             const icTerkini = document.getElementById('prof-ic').value.trim();
 
             try {
-                const docRef = doc(db, "pengajar", icCikguSession);
+                const docRef = doc(db, "pengajar", documentID);
                 
-                // Gunakan updateDoc untuk mengubah nilai field di dalam dokumen yang SAMA sahaja
+                // updateDoc dijamin akan mengubah suai rekod sedia ada sahaja
                 await updateDoc(docRef, {
                     namaPenuh: namaTerkini,
                     noIC: icTerkini,
                     tarikhKemaskini: new Date().toISOString()
                 });
 
-                // Kemaskini memori session browser dengan maklumat terkini
-                sessionStorage.setItem("pengajarLogMasuk", namaTerkini);
-                sessionStorage.setItem("pengajarIC", icTerkini);
-                icCikguSession = icTerkini; 
+                // Kemaskini memori session secara selamat
+                if(sessionStorage.getItem("pengajarLogMasuk")) sessionStorage.setItem("pengajarLogMasuk", namaTerkini);
+                if(sessionStorage.getItem("pengajarIC")) sessionStorage.setItem("pengajarIC", icTerkini);
 
                 alert("Profil anda berjaya dikemas kini!");
                 matikanModEdit();
-                ambilDataAsal(); // Refresh paparan tanpa muat semula halaman
+                ambilDataAsal(); // Segarkan data pada paparan screen
             } catch (error) {
                 console.error("Ralat kemas kini dokumen:", error);
-                alert("Gagal mengemas kini data. Sila cuba lagi.");
+                alert("Gagal menyimpan. Pastikan internet stabil dan cuba lagi.");
             }
         });
     </script>
 
-    <!-- INTERAKSI MOD EDIT ELEMEN DOM UI -->
     <script>
         function aktifkanModEdit() {
-            // Membuka kunci edit untuk kedua-dua medan pendaftaran
             document.getElementById('prof-nama').disabled = false;
             document.getElementById('prof-ic').disabled = false;
 
@@ -445,7 +439,6 @@
         }
 
         function matikanModEdit() {
-            // Mengunci semula semua medan ke fungsi read-only
             document.getElementById('prof-nama').disabled = true;
             document.getElementById('prof-ic').disabled = true;
 
