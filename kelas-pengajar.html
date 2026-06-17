@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelas Saya | REAL-MPC</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -24,7 +23,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
         body { background-color: #f4f7fc; color: var(--text-dark); min-height: 100vh; display: flex; }
 
-        /* --- SIDEBAR NAVIGATION --- */
         .sidebar {
             width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%); color: white;
             padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between;
@@ -43,384 +41,143 @@
         .menu-item.active { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4); }
         .menu-item:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(8px); }
         .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); cursor: pointer; }
-        .logout-btn:hover { background: #f43f5e; color: white !important; }
-
-        /* --- MAIN CONTENT AREA --- */
+        
         .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
         .top-bar { background: rgba(255, 255, 255, 0.85); padding: 25px 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 40px; }
-        .welcome-msg h1 { font-size: 1.8rem; font-weight: 800; }
         
-        /* --- LAYOUT STRUCTURE --- */
         .content-grid { display: grid; grid-template-columns: 360px 1fr; gap: 30px; }
-        .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.01); height: fit-content; }
+        .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; height: fit-content; }
         .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--primary); }
         
-        /* --- FORM STYLES --- */
         .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
         .form-group label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--primary); }
-        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 0.95rem; font-weight: 600; outline: none; background: #f8fafc; }
-        .form-group input:focus { border-color: var(--accent-orange); background: #fff; }
-        .btn { width: 100%; padding: 14px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 0.95rem; font-weight: 600; background: #f8fafc; }
+        .btn { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary { background: var(--grad-orange); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3); }
 
-        /* --- RESULT BOX (LINK & CODE) --- */
         .result-box { margin-top: 25px; padding: 20px; background: #fff7ed; border: 2px dashed #ffedd5; border-radius: 16px; display: none; }
-        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .info-label { font-size: 0.8rem; font-weight: 700; color: #c2410c; text-transform: uppercase; }
         .info-value { font-family: monospace; font-size: 1.1rem; font-weight: 700; color: #9a3412; }
-        .link-value { font-size: 0.85rem; word-break: break-all; background: white; padding: 10px; border-radius: 10px; border: 1px solid #fed7aa; margin-top: 5px; display: block; font-weight: 600; color: #64748b; }
+        .link-value { font-size: 0.85rem; word-break: break-all; background: white; padding: 10px; border-radius: 10px; border: 1px solid #fed7aa; display: block; margin-top: 5px; }
         .btn-copy { background: #0f172a; font-size: 0.75rem; padding: 6px 12px; border-radius: 8px; width: auto; display: inline-flex; margin-top: 8px; }
 
-        /* ================= GALLERY VIEW SYSTEM ================= */
-        .gallery-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-        
-        .class-box { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 25px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; box-shadow: 0 4px 15px rgba(0,0,0,0.01); }
-        .class-box:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06); border-color: #cbd5e1; }
-        
-        .class-header { margin-bottom: 15px; }
-        .class-badge { background: #f1f5f9; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
-        .class-box h3 { font-size: 1.3rem; font-weight: 800; color: var(--primary); line-height: 1.2; margin-bottom: 4px; }
-        .class-subjek { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        
-        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; gap: 8px; }
-        .student-counter { font-size: 0.85rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 8px 12px; border-radius: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-        
+        .gallery-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .class-box { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
+        .class-badge { background: #f1f5f9; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 10px; }
+        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
         .action-buttons { display: flex; gap: 6px; align-items: center; }
-        .btn-link-class { background: #f1f5f9; color: var(--text-dark); font-size: 0.9rem; padding: 8px 12px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-link-class:hover { background: #e2e8f0; color: var(--accent-orange); }
-        .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-        .btn-view-class:hover { background: #1e293b; }
-
-        .gallery-empty { text-align: center; color: var(--text-muted); padding: 60px 0; font-weight: 600; grid-column: 1/-1; }
-
-        /* ================= MODAL WINDOW POPUP ================= */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; border-radius: 28px; width: 90%; max-width: 600px; padding: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: skrinNaik 0.3s ease; max-height: 85vh; display: flex; flex-direction: column; }
-        @keyframes skrinNaik { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
-        .modal-header h2 { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
-        .modal-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; border: none; background: none; }
-        .modal-close:hover { color: #f43f5e; }
-
-        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; }
-        
-        /* TABLE INSIDE MODAL */
-        .modal-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .modal-table th { padding: 12px; background: #f8fafc; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
-        .modal-table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; font-weight: 600; }
-        
-        .btn-delete { background: #fee2e2; color: #ef4444; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; }
+        .btn-delete { background: #fee2e2; color: #ef4444; padding: 8px 12px; border-radius: 12px; border: none; cursor: pointer; }
         .btn-delete:hover { background: #ef4444; color: white; }
 
-        @media (max-width: 992px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; min-height: auto; position: relative; padding: 20px; }
-            .menu-list { flex-direction: row; flex-wrap: wrap; }
-            .main-content { width: 100%; margin-left: 0; padding: 20px; }
-            .content-grid { grid-template-columns: 1fr; }
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 28px; width: 90%; max-width: 600px; padding: 35px; }
+        .modal-table { width: 100%; border-collapse: collapse; }
+        .modal-table th { padding: 12px; background: #f8fafc; font-size: 0.75rem; text-transform: uppercase; text-align: left; }
+        .modal-table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <!-- ================= BAR SISI NAVIGASI ================= -->
     <nav class="sidebar">
-        <div class="logo-area">
-            <h2>REAL-<span>MPC</span></h2>
-            <p>Panel Pengajar</p>
-        </div>
+        <div class="logo-area"><h2>REAL-<span>MPC</span></h2><p>Panel Pengajar</p></div>
         <div class="menu-list">
             <a href="dashboard-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-            <a href="profile-pengajar.html" class="menu-item"><i class="fa-solid fa-id-card-clip"></i> Profile</a>
             <a href="kelas-pengajar.html" class="menu-item active"><i class="fa-solid fa-school"></i> Kelas Saya</a>
-            <a href="modul-pengajar.html" class="menu-item"><i class="fa-solid fa-book-open-reader"></i> Modul</a>
-            <a href="analisis-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-pie"></i> Analisis</a>
         </div>
         <a onclick="sessionStorage.clear(); window.location.href='login-pengajar.html';" class="menu-item logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
         </a>
     </nav>
 
-    <!-- ================= KANDUNGAN UTAMA ================= -->
     <main class="main-content">
-        <header class="top-bar">
-            <div class="welcome-msg">
-                <h1>Pengurusan Kelas Saya</h1>
-            </div>
-        </header>
+        <header class="top-bar"><h1>Pengurusan Kelas Saya</h1></header>
 
         <section class="content-grid">
-            <!-- KAD KIRI: DAFTAR KELAS BARU -->
             <div class="card">
-                <div class="card-title"><i class="fa-solid fa-circle-plus" style="color:var(--accent-orange)"></i>Daftar Kelas Baharu</div>
+                <div class="card-title"><i class="fa-solid fa-circle-plus" style="color:var(--accent-orange)"></i>Daftar Kelas</div>
                 <form id="form-daftar-kelas">
-                    <div class="form-group">
-                        <label>Nama Kelas</label>
-                        <input type="text" id="nama-kelas" required autocomplete="off" placeholder="Contoh: Bijak Kreatif 1">
-                    </div>
-                    <div class="form-group">
-                        <label>Subjek Pembelajaran</label>
-                        <input type="text" id="subjek-kelas" required autocomplete="off" placeholder="Contoh: Matematik / Sains">
-                    </div>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> Jana & Aktifkan Kelas</button>
+                    <div class="form-group"><label>Nama Kelas</label><input type="text" id="nama-kelas" required></div>
+                    <div class="form-group"><label>Subjek</label><input type="text" id="subjek-kelas" required></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> Jana Kelas</button>
                 </form>
-
                 <div class="result-box" id="papar-kod-box">
-                    <div class="info-row">
-                        <span class="info-label">Kod Kelas:</span>
-                        <span class="info-value" id="text-kod-kelas">------</span>
-                    </div>
-                    <div class="info-row" style="display:block;">
-                        <span class="info-label">Pautan Link Join Pelajar:</span>
-                        <span class="link-value" id="text-link-kelas">Memuatkan...</span>
-                        <button class="btn btn-copy" onclick="salinLinkAsal()"><i class="fa-solid fa-copy"></i> Salin Pautan</button>
-                    </div>
+                    <div class="info-label">Kod Kelas:</div><span class="info-value" id="text-kod-kelas"></span>
+                    <div class="link-value" id="text-link-kelas"></div>
                 </div>
             </div>
 
-            <!-- KAD KANAN: PAPARAN GALERI KELAS (GALLERY VIEW) -->
             <div>
-                <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-table-cells-large" style="color:#2563eb"></i> Galeri Kelas Anda
-                </div>
-                
-                <div class="gallery-container" id="galeri-kelas-box">
-                    <div class="gallery-empty">Memuatkan semua maklumat galeri kelas...</div>
-                </div>
+                <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;">Galeri Kelas</div>
+                <div class="gallery-container" id="galeri-kelas-box"></div>
             </div>
         </section>
     </main>
 
-    <!-- ================= MODAL SENARAI PELAJAR (POPUP WINDOW) ================= -->
     <div class="modal" id="modal-pelajar">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-tajuk-kelas">Nama Kelas</h2>
-                <button class="modal-close" onclick="tutupModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <table class="modal-table">
-                    <thead>
-                        <tr>
-                            <th>Nama Pelajar</th>
-                            <th>No. IC</th>
-                            <th style="text-align: right;">Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modal-senarai-body">
-                        <!-- Senarai Pelajar diisi secara JavaScript -->
-                    </tbody>
-                </table>
-            </div>
+            <div class="modal-header"><h2 id="modal-tajuk-kelas"></h2></div>
+            <div class="modal-body"><table class="modal-table"><tbody id="modal-senarai-body"></tbody></table></div>
+            <button onclick="document.getElementById('modal-pelajar').style.display='none'">Tutup</button>
         </div>
     </div>
 
-    <!-- ================= FIRESTORE DATABASE LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, collection, getDocs, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, getDocs, getDoc, updateDoc, arrayRemove, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
-            authDomain: "real-mpc-module-6be02.firebaseapp.com",
-            projectId: "real-mpc-module-6be02",
-            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
-            messagingSenderId: "1045888004132",
-            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
-            measurementId: "G-XD3VQ7JKKB"
-        };
-
+        const firebaseConfig = { /* ... Masukkan konfigurasi anda di sini ... */ };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
         const base_url = window.location.origin + window.location.pathname.replace('kelas-pengajar.html', '');
-        let kodKelasAktifSekarang = "";
 
-        // 1. FUNGSI UTAMA: AMBIL DATA KELAS & PAPAR DALAM BENTUK GALERI + FORMAT LINK JOIN
-        async function muatGaleriKelas() {
+        window.muatGaleriKelas = async function() {
             const galeriBox = document.getElementById('galeri-kelas-box');
-            try {
-                const querySnapshot = await getDocs(collection(db, "kelas"));
-                galeriBox.innerHTML = ''; 
-
-                if (querySnapshot.empty) {
-                    galeriBox.innerHTML = '<div class="gallery-empty">Belum ada kelas berdaftar. Sila cipta kelas baharu di menu kiri.</div>';
-                    return;
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const kod = doc.id;
-                    const bilanganPelajar = data.senaraiPelajar ? data.senaraiPelajar.length : 0;
-                    
-                    // Jana pautan dinamik terus berdasarkan kod kelas semasa loop berjalan
-                    const fullJoinLink = `${base_url}join-kelas.html?code=${kod}`;
-
-                    let divCard = document.createElement('div');
-                    divCard.className = 'class-box';
-                    divCard.innerHTML = `
-                        <div class="class-header">
-                            <span class="class-badge">Kod: ${kod}</span>
-                            <h3>${data.namaKelas}</h3>
-                            <div class="class-subjek"><i class="fa-solid fa-book-bookmark"></i> ${data.subjek}</div>
+            const querySnapshot = await getDocs(collection(db, "kelas"));
+            galeriBox.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const kod = doc.id;
+                let divCard = document.createElement('div');
+                divCard.className = 'class-box';
+                divCard.innerHTML = `
+                    <div>
+                        <span class="class-badge">Kod: ${kod}</span>
+                        <h3>${data.namaKelas}</h3>
+                        <p>${data.subjek}</p>
+                    </div>
+                    <div class="class-footer">
+                        <span>${data.senaraiPelajar?.length || 0} Pelajar</span>
+                        <div class="action-buttons">
+                            <button class="btn-view-class" onclick="bukaModalPelajar('${kod}', '${data.namaKelas}')"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-delete" onclick="hapusKelas('${kod}', '${data.namaKelas}')"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
-                        <div class="class-footer">
-                            <div class="student-counter">
-                                <i class="fa-solid fa-user-group"></i> ${bilanganPelajar} Pelajar
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn-link-class" onclick="salinLinkTerus('${fullJoinLink}')" title="Salin Pautan Kelas">
-                                    <i class="fa-solid fa-link"></i>
-                                </button>
-                                <button class="btn-view-class" onclick="bukaModalPelajar('${kod}', '${data.namaKelas}')">
-                                    <i class="fa-solid fa-eye"></i> Lihat Kelas
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    galeriBox.appendChild(divCard);
-                });
-            } catch (error) {
-                console.error("Ralat muat galeri:", error);
-                galeriBox.innerHTML = '<div class="gallery-empty">Gagal memuatkan data dari Firebase.</div>';
+                    </div>
+                `;
+                galeriBox.appendChild(divCard);
+            });
+        }
+
+        window.hapusKelas = async function(kodKelas, namaKelas) {
+            if(confirm(`Padam kelas "${namaKelas}"? Tindakan ini tidak boleh dipatah balik.`)) {
+                await deleteDoc(doc(db, "kelas", kodKelas));
+                muatGaleriKelas();
             }
         }
-        
-        muatGaleriKelas();
 
-        // 2. DAFTAR KELAS BARU & REFRESH GALERI
         document.getElementById('form-daftar-kelas').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const nama = document.getElementById('nama-kelas').value.trim();
-            const subjek = document.getElementById('subjek-kelas').value.trim();
-            
-            const askarKod = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            let kodRawak = "";
-            for (let i = 0; i < 5; i++) {
-                kodRawak += askarKod.charAt(Math.floor(Math.random() * askarKod.length));
-            }
-
-            try {
-                await setDoc(doc(db, "kelas", kodRawak), {
-                    namaKelas: nama,
-                    subjek: subjek,
-                    kodKelas: kodRawak,
-                    senaraiPelajar: []
-                });
-
-                document.getElementById('text-kod-kelas').innerText = kodRawak;
-                const linkJoin = `${base_url}join-kelas.html?code=${kodRawak}`;
-                document.getElementById('text-link-kelas').innerText = linkJoin;
-                document.getElementById('papar-kod-box').style.display = 'block';
-
-                alert("Kelas baharu berjaya didaftarkan ke sistem!");
-                document.getElementById('form-daftar-kelas').reset();
-                
-                muatGaleriKelas(); 
-            } catch (error) {
-                console.error("Ralat daftar kelas:", error);
-                alert("Gagal mendaftar kelas.");
-            }
+            const kodRawak = Math.random().toString(36).substring(2, 7).toUpperCase();
+            await setDoc(doc(db, "kelas", kodRawak), {
+                namaKelas: document.getElementById('nama-kelas').value,
+                subjek: document.getElementById('subjek-kelas').value,
+                senaraiPelajar: []
+            });
+            alert("Kelas berjaya didaftarkan!");
+            muatGaleriKelas();
         });
 
-        // 3. LOGIK POPUP LIHAT PELAJAR DI DALAM MODAL
-        window.bukaModalPelajar = async function(kodKelas, namaKelas) {
-            kodKelasAktifSekarang = kodKelas;
-            document.getElementById('modal-tajuk-kelas').innerText = namaKelas;
-            document.getElementById('modal-pelajar').style.display = 'flex';
-            
-            const tbody = document.getElementById('modal-senarai-body');
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">Memuatkan profil pelajar...</td></tr>';
-
-            try {
-                const docRef = doc(db, "kelas", kodKelas);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists() && docSnap.data().senaraiPelajar && docSnap.data().senaraiPelajar.length > 0) {
-                    const arrPelajar = docSnap.data().senaraiPelajar;
-                    tbody.innerHTML = '';
-
-                    for(let icPelajar of arrPelajar) {
-                        const pelRef = doc(db, "pelajar", icPelajar);
-                        const pelSnap = await getDoc(pelRef);
-                        let namaPelajar = icPelajar; 
-
-                        if(pelSnap.exists()) {
-                            namaPelajar = pelSnap.data().namaPenuh || pelSnap.data().nama || icPelajar;
-                        }
-
-                        let tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${namaPelajar}</td>
-                            <td>${icPelajar}</td>
-                            <td style="text-align: right;">
-                                <button class="btn-delete" onclick="hapusPelajarDariModal('${icPelajar}', '${namaPelajar}')">
-                                    <i class="fa-solid fa-trash-can"></i> Hapus
-                                </button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:600;">Tiada pelajar berdaftar di dalam kelas ini lagi.</td></tr>';
-                }
-            } catch (error) {
-                console.error("Ralat membaca data modal:", error);
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px;">Gagal memuatkan data.</td></tr>';
-            }
-        }
-
-        // 4. FUNGSI ACTION HAPUS PELAJAR DIRECT DARI MODAL POPUP
-        window.hapusPelajarDariModal = async function(icPelajar, namaPelajar) {
-            if(confirm(`Adakah anda pasti mahu mengeluarkan ${namaPelajar} (${icPelajar}) daripada kelas ini?`)) {
-                try {
-                    const docRef = doc(db, "kelas", kodKelasAktifSekarang);
-                    await updateDoc(docRef, {
-                        senaraiPelajar: arrayRemove(icPelajar)
-                    });
-                    
-                    alert("Pelajar telah berjaya dipadam dari kelas.");
-                    
-                    bukaModalPelajar(kodKelasAktifSekarang, document.getElementById('modal-tajuk-kelas').innerText);
-                    muatGaleriKelas();
-                } catch (error) {
-                    console.error("Gagal padam:", error);
-                    alert("Masalah teknikal berlaku, gagal padam pelajar.");
-                }
-            }
-        }
-
-        // Expose fungsi salin untuk kegunaan global onclick elemen dinamik
-        window.salinLinkTerus = function(pautan) {
-            navigator.clipboard.writeText(pautan).then(() => {
-                alert("Pautan bagi kelas ini berjaya disalin! Sedia untuk dikongsi kepada pelajar.");
-            }).catch(err => {
-                console.error('Gagal menyalin:', err);
-            });
-        }
-    </script>
-
-    <!-- FUNGSI ANTARAMUKA MODAL & COPY PASTE UTALITI UI -->
-    <script>
-        function tutupModal() {
-            document.getElementById('modal-pelajar').style.display = 'none';
-        }
-        
-        window.onclick = function(event) {
-            const modal = document.getElementById('modal-pelajar');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        function salinLinkAsal() {
-            const textLink = document.getElementById('text-link-kelas').innerText;
-            navigator.clipboard.writeText(textLink).then(() => {
-                alert("Pautan link join kelas disalin!");
-            });
-        }
+        muatGaleriKelas();
     </script>
 </body>
 </html>
