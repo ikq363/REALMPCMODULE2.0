@@ -5,20 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pengajar | REAL-MPC</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- SCRIPT SEKATAN KESELAMATAN (Mesti di atas sekali sebelum page sempat loading) -->
-    <script>
-        // Semak jika data sesi login wujud dalam browser
-        const namaPengajar = sessionStorage.getItem("pengajarLogMasuk");
-        
-        if (!namaPengajar) {
-            alert("Akses Disekat! Anda perlu log masuk terlebih dahulu untuk mengakses dashboard ini.");
-            window.location.href = "login-pengajar.html"; // Tendang balik ke page login
-        }
-    </script>
 
     <style>
         :root {
@@ -26,7 +14,7 @@
             --glass-bg: rgba(255, 255, 255, 0.85);
             --text-dark: #0f172a;
             
-            /* Warna Palet Neon Kebabom */
+            /* Warna Palet Neon */
             --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
             --grad-blue: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
@@ -202,7 +190,7 @@
         }
 
         /* ==========================================================================
-           KAD STATISTIK (HANYA 2 KOTAK SEPERTI DIMINTA)
+           KAD STATISTIK (HANYA 2 KOTAK)
            ========================================================================== */
         .stats-grid {
             display: grid;
@@ -284,7 +272,6 @@
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
 
-    <!-- ================= BAR SISI NAVIGASI ================= -->
     <nav class="sidebar">
         <div class="logo-area">
             <h2>REAL-<span>MPC</span></h2>
@@ -306,19 +293,16 @@
             </a>
         </div>
 
-        <!-- Tombol Log Keluar Bermekanisme Padam Sesi -->
         <a onclick="logoutAkaun()" class="menu-item logout-btn" style="margin-top: 20px;">
             <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
         </a>
     </nav>
 
-    <!-- ================= SEKSYEN KANDUNGAN UTAMA ================= -->
     <main class="main-content">
         
-        <!-- TOP BAR HEADER (Memaparkan Nama Pengajar Sebenar) -->
         <header class="top-bar">
             <div class="welcome-msg">
-                <h1 id="paparan-nama-cikgu">Selamat Datang!</h1>
+                <h1 id="paparan-nama-cikgu">Memuatkan...</h1>
                 <p>Hari ini adalah hari yang hebat untuk membimbing murid pintar cerdas.</p>
             </div>
             <div class="user-profile-badge">
@@ -326,20 +310,19 @@
             </div>
         </header>
 
-        <!-- KAD STATISTIK (TINGGAL 2 KOTAK SHJ) -->
         <section class="stats-grid">
             
             <div class="stat-card stat-card-1">
                 <i class="fa-solid fa-users bg-icon"></i>
                 <p>Jumlah Pelajar</p>
-                <h2>142</h2>
-                <span><i class="fa-solid fa-arrow-trend-up"></i> +12 minggu ini</span>
+                <h2 id="total-pelajar">...</h2>
+                <span><i class="fa-solid fa-circle-nodes"></i> Data Sebenar (Live)</span>
             </div>
 
             <div class="stat-card stat-card-2">
                 <i class="fa-solid fa-school bg-icon"></i>
                 <p>Jumlah Kelas</p>
-                <h2>6</h2>
+                <h2 id="total-kelas">...</h2>
                 <span><i class="fa-solid fa-circle-check"></i> Semua Aktif</span>
             </div>
 
@@ -347,18 +330,57 @@
 
     </main>
 
-    <!-- SCRIPT UTK PAPAR NAMA & LOGOUT -->
-    <script>
-        // Masukkan nama pengajar dari data login ke element HTML h1
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Firebase anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- 1. PAPAR NAMA PENGAJAR ---
+        const namaPengajar = sessionStorage.getItem("pengajarLogMasuk");
         if (namaPengajar) {
             document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, " + namaPengajar + "!";
+        } else {
+            document.getElementById('paparan-nama-cikgu').innerText = "Selamat Datang, Cikgu!";
         }
 
-        // Fungsi padam data sesi masa log keluar supaya auth guard di atas kembali aktif
+        // --- 2. KIRA JUMLAH PELAJAR SECARA LIVE ---
+        // Sila pastikan nama collection di Firestore anda adalah "murid" atau "pelajar"
+        onSnapshot(collection(db, "murid"), (snapshot) => {
+            document.getElementById('total-pelajar').innerText = snapshot.size;
+        }, (error) => {
+            console.error("Ralat semak jumlah murid:", error);
+            document.getElementById('total-pelajar').innerText = "0";
+        });
+
+        // --- 3. KIRA JUMLAH KELAS SECARA LIVE ---
+        // Sila pastikan nama collection di Firestore anda adalah "kelas"
+        onSnapshot(collection(db, "kelas"), (snapshot) => {
+            document.getElementById('total-kelas').innerText = snapshot.size;
+        }, (error) => {
+            console.error("Ralat semak jumlah kelas:", error);
+            document.getElementById('total-kelas').innerText = "0";
+        });
+    </script>
+
+    <script>
         function logoutAkaun() {
             if(confirm("Adakah anda pasti untuk log keluar daripada sistem?")) {
-                sessionStorage.clear(); // Bersihkan nama pengajar dari memori browser
-                window.location.href = "index.html"; // Tendang balik ke main page
+                sessionStorage.clear();
+                window.location.href = "login-pengajar.html";
             }
         }
     </script>
