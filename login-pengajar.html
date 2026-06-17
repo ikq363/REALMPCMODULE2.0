@@ -277,6 +277,7 @@
                     <i class="fa-solid fa-user"></i>
                     <input type="text" id="login-nama" placeholder="MASUKKAN NAMA PENUH" required autocomplete="off">
                 </div>
+                <span class="input-tip">*Ditukar ke HURUF BESAR automatik</span>
             </div>
 
             <div class="input-group">
@@ -396,8 +397,11 @@
                     if(data.namaPenuh === nama) {
                         alert(`Selamat Datang Cikgu, ${data.namaPenuh}! Log masuk berjaya.`);
                         
-                        // SINI HALAMAN BARU: Hala ke mukasurat kosong (dashboard pengajar) nanti
-                        // window.location.href = "dashboard-pengajar.html"; 
+                        // [KEMAS KINI BAHARU]: Simpan nama dalam sessionStorage browser untuk sistem Auth Guard
+                        sessionStorage.setItem("pengajarLogMasuk", data.namaPenuh);
+                        
+                        // [KEMAS KINI BAHARU]: Membuka pintu pagar dan halakan terus ke Dashboard Pengajar
+                        window.location.href = "dashboard-pengajar.html"; 
                     } else {
                         alert('Log Masuk Gagal: Nama Penuh tidak sepadan dengan No. IC yang didaftarkan.');
                     }
