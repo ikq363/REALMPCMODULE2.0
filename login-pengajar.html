@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Masuk Pengajar | Modul REAL-MPC</title>
+    
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent-blue: #2563eb;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            color: #0f172a;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Kesan Bulatan Cahaya Latar Belakang */
+        .glow-shape {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .glow-1 { top: -100px; left: -100px; }
+        .glow-2 { bottom: -100px; right: -100px; }
+
+        /* --- KAD UTAMA (GLASSMORPHISM) --- */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Tombol Kembali ke Utama */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-box i {
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+        }
+
+        .header-box h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .header-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        /* --- TAB SYSTEM (DAFTAR / LOGIN) --- */
+        .tabs {
+            display: flex;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 32px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* --- FORM STYLING --- */
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            outline: none;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Tip Format Kecil */
+        .input-tip {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
+            margin-top: 28px;
+        }
+
+        .submit-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.25);
+        }
+
+        /* Responsif Telefon */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-shape glow-1"></div>
+    <div class="glow-shape glow-2"></div>
+
+    <div class="auth-container">
+        <!-- Pautan Balik ke Muka Depan -->
+        <a href="index.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
+        </a>
+
+        <div class="header-box">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <h2>Portal Pengajar</h2>
+            <p id="header-desc">Sila daftar akaun pengajar baharu anda</p>
+        </div>
+
+        <!-- TABS PINDAH BORANG -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('daftar')">Daftar</button>
+            <button class="tab-btn" onclick="switchTab('login')">Log Masuk</button>
+        </div>
+
+        <!-- ================= PANEL DAFTAR ================= -->
+        <form id="form-daftar" class="form-panel active">
+            <div class="input-group">
+                <label>Nama Penuh</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="reg-nama" placeholder="CONTOH: AHMAD BIN ALI" required autocomplete="off">
+                </div>
+                <span class="input-tip">*Ditukar ke HURUF BESAR automatik</span>
+            </div>
+
+            <div class="input-group">
+                <label>No. Kad Pengenalan</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="reg-ic" placeholder="CONTOH: 850102145567" maxlength="12" required autocomplete="off">
+                </div>
+                <span class="input-tip">*Masukkan 12 digit nombor sahaja (tanpa -)</span>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fa-solid fa-user-plus"></i> Cipta Akaun Pengajar
+            </button>
+        </form>
+
+        <!-- ================= PANEL LOGIN ================= -->
+        <form id="form-login" class="form-panel">
+            <div class="input-group">
+                <label>Nama Penuh</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="login-nama" placeholder="MASUKKAN NAMA PENUH" required autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>No. Kad Pengenalan</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="login-ic" placeholder="MASUKKAN NO. IC" maxlength="12" required autocomplete="off">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" style="background: var(--accent-blue);">
+                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+            </button>
+        </form>
+    </div>
+
+    <!-- ==========================================================================
+         FIREBASE SDK & LOGIC SCRIPT
+         ========================================================================== -->
+    <script type="module">
+        // Import Firebase modules yang diperlukan
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Firebase daripada anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
+            authDomain: "real-mpc-module-6be02.firebaseapp.com",
+            projectId: "real-mpc-module-6be02",
+            storageBucket: "real-mpc-module-6be02.firebasestorage.app",
+            messagingSenderId: "1045888004132",
+            appId: "1:1045888004132:web:869de28a286506f15ea8b1",
+            measurementId: "G-XD3VQ7JKKB"
+        };
+
+        // Initialize Firebase & Services
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // --- SISTEM PEMFORMATAN AUTOMATIK (INPUT FILTER) ---
+        const setupInputFilters = (nameId, icId) => {
+            const nameInput = document.getElementById(nameId);
+            const icInput = document.getElementById(icId);
+
+            // Paksa jadi Huruf Besar masa menaip
+            nameInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase();
+            });
+
+            // Paksa buang sempang/huruf (hanya terima Digit 0-9 sahaja)
+            icInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        };
+
+        // Jalankan tapis pada kedua-dua borang (Daftar & Login)
+        setupInputFilters('reg-nama', 'reg-ic');
+        setupInputFilters('login-nama', 'login-ic');
+
+
+        // ================= ACTION: PROSES PENDAFTARAN =================
+        document.getElementById('form-daftar').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nama = document.getElementById('reg-nama').value.trim();
+            const ic = document.getElementById('reg-ic').value.trim();
+
+            if(ic.length !== 12) {
+                alert('Ralat: Sila pastikan No. IC mengandungi tepat 12 digit nombor.');
+                return;
+            }
+
+            try {
+                // Semak dulu jika IC dah pernah berdaftar sebagai pengajar
+                const docRef = doc(db, "pengajar", ic);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    alert('Makluman: No. IC ini sudah pun berdaftar. Sila terus ke tab Log Masuk.');
+                } else {
+                    // Simpan data baharu ke dalam Cloud Firestore
+                    await setDoc(doc(db, "pengajar", ic), {
+                        namaPenuh: nama,
+                        noIC: ic,
+                        tarikhDaftar: new Date().toISOString(),
+                        peranan: "Pengajar"
+                    });
+                    alert('Pendaftaran Berjaya! Akaun pengajar anda telah disimpan. Anda kini boleh log masuk.');
+                    document.getElementById('form-daftar').reset();
+                    switchTab('login'); // Tukar tab ke login secara automatik
+                }
+            } catch (error) {
+                console.error("Ralat simpan data:", error);
+                alert('Terdapat masalah teknikal semasa menyimpan data. Cuba lagi.');
+            }
+        });
+
+
+        // ================= ACTION: PROSES LOG MASUK =================
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nama = document.getElementById('login-nama').value.trim();
+            const ic = document.getElementById('login-ic').value.trim();
+
+            try {
+                // Ambil data pengajar dari Firestore berasaskan No. IC (sebagai ID Dokumen)
+                const docRef = doc(db, "pengajar", ic);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Sahkan sama ada Nama Penuh yang ditaip sepadan dengan rekod pendaftaran
+                    if(data.namaPenuh === nama) {
+                        alert(`Selamat Datang Cikgu, ${data.namaPenuh}! Log masuk berjaya.`);
+                        
+                        // SINI HALAMAN BARU: Hala ke mukasurat kosong (dashboard pengajar) nanti
+                        // window.location.href = "dashboard-pengajar.html"; 
+                    } else {
+                        alert('Log Masuk Gagal: Nama Penuh tidak sepadan dengan No. IC yang didaftarkan.');
+                    }
+                } else {
+                    alert('Log Masuk Gagal: Rekod pengajar tidak ditemui. Sila daftar akaun terlebih dahulu.');
+                }
+            } catch (error) {
+                console.error("Ralat log masuk:", error);
+                alert('Ralat rangkaian. Sila pastikan sambungan internet anda stabil.');
+            }
+        });
+
+        // Jadikan fungsi switchTab boleh diakses oleh butang HTML biasa
+        window.switchTab = (type) => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.form-panel');
+            const desc = document.getElementById('header-desc');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            if (type === 'daftar') {
+                tabs[0].classList.add('active');
+                document.getElementById('form-daftar').classList.add('active');
+                desc.innerText = "Sila daftar akaun pengajar baharu anda";
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('form-login').classList.add('active');
+                desc.innerText = "Sila masukkan maklumat akaun pengajar anda";
+            }
+        };
+    </script>
+</body>
+</html>
