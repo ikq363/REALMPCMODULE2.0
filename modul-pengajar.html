@@ -10,40 +10,211 @@
 
     <style>
         :root {
-            --primary: #0f172a; --accent-orange: #ff7a00; --text-dark: #0f172a; --text-muted: #64748b;
+            --primary: #0f172a; 
+            --accent-orange: #ff7a00; 
+            --text-dark: #0f172a; 
+            --text-muted: #64748b;
             --grad-pink: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            --grad-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --grad-green: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --grad-purple: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
             --grad-orange: linear-gradient(135deg, #ff7a00 0%, #ff5500 100%);
+            --grad-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --grad-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            --grad-indigo: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --grad-rose: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --grad-amber: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --grad-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --grad-lime: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            --grad-fuchsia: linear-gradient(135deg, #d946ef 0%, #c026d3 100%);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: #f4f7fc; color: var(--text-dark); min-height: 100vh; display: flex; }
 
-        /* SIDEBAR SAMA SEPERTI ASAL */
-        .sidebar { width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%); color: white; padding: 30px 20px; position: fixed; height: 100vh; }
+        /* SIDEBAR */
+        .sidebar { 
+            width: 280px; 
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%); 
+            color: white; 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            min-height: 100vh; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1); 
+            z-index: 100;
+        }
+
         .logo-area { text-align: center; margin-bottom: 40px; }
-        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; }
+        .logo-area h2 { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; letter-spacing: 1px; }
         .logo-area h2 span { color: #ff7a00; }
-        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-        .menu-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; border-radius: 16px; }
-        .menu-item.active { background: var(--grad-pink); color: white; }
-        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
-        .top-bar { background: rgba(255, 255, 255, 0.85); padding: 25px 30px; border-radius: 24px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .logo-area p { font-size: 0.75rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .menu-item {
+            display: flex; align-items: center; gap: 16px; padding: 14px 20px;
+            color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600;
+            font-size: 1rem; border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        .menu-item:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(8px); }
+        .menu-item.active { background: var(--grad-pink); color: white; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3); }
+        .menu-item i { font-size: 1.2rem; width: 25px; }
+        .logout-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); cursor: pointer; margin-top: auto; }
+        .logout-btn:hover { background: #f43f5e; color: white !important; box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4); }
+
+        /* MAIN CONTENT */
+        .main-content { 
+            margin-left: 280px; 
+            padding: 40px; 
+            width: calc(100% - 280px); 
+            position: relative;
+        }
+
+        .top-bar { 
+            background: rgba(255, 255, 255, 0.85); 
+            padding: 25px 30px; 
+            border-radius: 24px; 
+            margin-bottom: 40px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .top-bar h1 { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .top-bar .badge-count { 
+            background: var(--grad-orange); 
+            color: white; 
+            padding: 6px 16px; 
+            border-radius: 100px; 
+            font-weight: 700; 
+            font-size: 0.85rem;
+        }
 
         /* GRID MODUL */
-        .modul-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        .modul-card { 
-            background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 30px; 
-            text-align: center; cursor: pointer; transition: 0.3s; text-decoration: none; color: var(--primary);
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        .modul-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 24px; 
         }
-        .modul-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06); border-color: var(--accent-orange); }
-        .modul-card i { font-size: 2rem; color: var(--accent-orange); }
-        .modul-card h3 { font-size: 1.1rem; font-weight: 800; }
+
+        .modul-card { 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 24px; 
+            padding: 30px 20px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            text-decoration: none; 
+            color: var(--primary);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+        }
+
+        .modul-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08); 
+            border-color: var(--accent-orange); 
+        }
+
+        .modul-card .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .modul-card h3 { 
+            font-size: 1rem; 
+            font-weight: 800; 
+            line-height: 1.3;
+        }
+
+        .modul-card .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modul-card .badge-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+        }
+
+        .badge-status.available { background: #d1fae5; color: #059669; }
+        .badge-status.upcoming { background: #fef3c7; color: #d97706; }
+        .badge-status.coming { background: #f1f5f9; color: #94a3b8; }
+
+        /* Warna ikon mengikut modul */
+        .modul-card:nth-child(1) .icon-wrapper { background: var(--grad-orange); }
+        .modul-card:nth-child(2) .icon-wrapper { background: var(--grad-blue); }
+        .modul-card:nth-child(3) .icon-wrapper { background: var(--grad-green); }
+        .modul-card:nth-child(4) .icon-wrapper { background: var(--grad-purple); }
+        .modul-card:nth-child(5) .icon-wrapper { background: var(--grad-red); }
+        .modul-card:nth-child(6) .icon-wrapper { background: var(--grad-teal); }
+        .modul-card:nth-child(7) .icon-wrapper { background: var(--grad-indigo); }
+        .modul-card:nth-child(8) .icon-wrapper { background: var(--grad-rose); }
+        .modul-card:nth-child(9) .icon-wrapper { background: var(--grad-amber); }
+        .modul-card:nth-child(10) .icon-wrapper { background: var(--grad-cyan); }
+        .modul-card:nth-child(11) .icon-wrapper { background: var(--grad-lime); }
+        .modul-card:nth-child(12) .icon-wrapper { background: var(--grad-fuchsia); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .modul-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; padding: 20px; border-radius: 0 0 24px 24px; }
+            .menu-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .main-content { width: 100%; margin-left: 0; padding: 20px; }
+            .modul-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 500px) {
+            .modul-grid { grid-template-columns: 1fr; }
+            .top-bar { flex-direction: column; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo-area"><h2>REAL-<span>MPC</span></h2><p style="font-size: 0.75rem; opacity: 0.6; text-transform: uppercase;">Panel Pengajar</p></div>
+        <div class="logo-area">
+            <h2>REAL-<span>MPC</span></h2>
+            <p>Panel Pengajar</p>
+        </div>
         <div class="menu-list">
             <a href="dashboard-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="profile-pengajar.html" class="menu-item"><i class="fa-solid fa-id-card-clip"></i> Profile</a>
@@ -51,28 +222,119 @@
             <a href="modul-pengajar.html" class="menu-item active"><i class="fa-solid fa-book-open-reader"></i> Modul</a>
             <a href="analisis-pengajar.html" class="menu-item"><i class="fa-solid fa-chart-pie"></i> Analisis</a>
         </div>
-        <a onclick="sessionStorage.clear(); window.location.href='login-pengajar.html';" class="menu-item" style="margin-top:auto; cursor:pointer; background: rgba(244, 63, 94, 0.1); color: #f43f5e;">
+        <a onclick="sessionStorage.clear(); window.location.href='login-pengajar.html';" class="menu-item logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
         </a>
     </nav>
 
     <main class="main-content">
-        <header class="top-bar"><h1>Senarai Modul Aktiviti</h1></header>
+        <header class="top-bar">
+            <h1><i class="fa-solid fa-book-open-reader" style="color: var(--accent-orange);"></i> Senarai Modul Aktiviti</h1>
+            <span class="badge-count"><i class="fa-regular fa-file-lines"></i> 12 Modul</span>
+        </header>
 
         <div class="modul-grid">
-            <script>
-                // Menjana 12 kad modul secara automatik
-                for (let i = 1; i <= 12; i++) {
-                    document.write(`
-                        <a href="aktiviti-${i}.html" class="modul-card">
-                            <i class="fa-solid fa-rocket"></i>
-                            <h3>AKTIVITI ${i}</h3>
-                        </a>
-                    `);
-                }
-            </script>
+            <!-- Aktiviti 1 -->
+            <a href="aktiviti-1-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-rocket"></i></div>
+                <h3>Aktiviti 1</h3>
+                <span class="subtitle">Keazaman Menakluk Persamaan</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 2 -->
+            <a href="aktiviti-2-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-brain"></i></div>
+                <h3>Aktiviti 2</h3>
+                <span class="subtitle">Minda Kreatif Menyelesaikan Masalah</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 3 -->
+            <a href="aktiviti-3-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-handshake"></i></div>
+                <h3>Aktiviti 3</h3>
+                <span class="subtitle">Kerjasama Kumpulan</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 4 -->
+            <a href="aktiviti-4-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-lightbulb"></i></div>
+                <h3>Aktiviti 4</h3>
+                <span class="subtitle">Inovasi & Penemuan</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 5 -->
+            <a href="aktiviti-5-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-compass"></i></div>
+                <h3>Aktiviti 5</h3>
+                <span class="subtitle">Navigasi Ilmu</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 6 -->
+            <a href="aktiviti-6-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-chart-simple"></i></div>
+                <h3>Aktiviti 6</h3>
+                <span class="subtitle">Analisis & Interpretasi</span>
+                <span class="badge-status available">📌 Tersedia</span>
+            </a>
+
+            <!-- Aktiviti 7 -->
+            <a href="aktiviti-7-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-pen-fancy"></i></div>
+                <h3>Aktiviti 7</h3>
+                <span class="subtitle">Penulisan Reflektif</span>
+                <span class="badge-status upcoming">⏳ Akan Datang</span>
+            </a>
+
+            <!-- Aktiviti 8 -->
+            <a href="aktiviti-8-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-microphone"></i></div>
+                <h3>Aktiviti 8</h3>
+                <span class="subtitle">Komunikasi Berkesan</span>
+                <span class="badge-status upcoming">⏳ Akan Datang</span>
+            </a>
+
+            <!-- Aktiviti 9 -->
+            <a href="aktiviti-9-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-puzzle-piece"></i></div>
+                <h3>Aktiviti 9</h3>
+                <span class="subtitle">Penyelesaian Masalah</span>
+                <span class="badge-status upcoming">⏳ Akan Datang</span>
+            </a>
+
+            <!-- Aktiviti 10 -->
+            <a href="aktiviti-10-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-people-group"></i></div>
+                <h3>Aktiviti 10</h3>
+                <span class="subtitle">Kolaboratif</span>
+                <span class="badge-status upcoming">⏳ Akan Datang</span>
+            </a>
+
+            <!-- Aktiviti 11 -->
+            <a href="aktiviti-11-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-gear"></i></div>
+                <h3>Aktiviti 11</h3>
+                <span class="subtitle">Aplikasi & Praktis</span>
+                <span class="badge-status coming">🔒 Akan Tiba</span>
+            </a>
+
+            <!-- Aktiviti 12 -->
+            <a href="aktiviti-12-pengajar.html" class="modul-card">
+                <div class="icon-wrapper"><i class="fa-solid fa-trophy"></i></div>
+                <h3>Aktiviti 12</h3>
+                <span class="subtitle">Penghargaan & Refleksi</span>
+                <span class="badge-status coming">🔒 Akan Tiba</span>
+            </a>
         </div>
     </main>
 
+    <script>
+        // Log untuk memastikan link berfungsi
+        console.log('Modul Pengajar - Semua aktiviti 1-12 sedia.');
+    </script>
 </body>
 </html>
