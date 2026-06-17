@@ -289,12 +289,11 @@
     </div>
 
     <script type="module">
-        // Import Firebase modules yang diperlukan
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase dari akaun anda
+        // Konfigurasi Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDzWmeMvmMwNsEEiFmnr9PRtw6nNjIUGRg",
             authDomain: "real-mpc-module-6be02.firebaseapp.com",
@@ -305,33 +304,29 @@
             measurementId: "G-XD3VQ7JKKB"
         };
 
-        // Initialize Firebase & Services
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        // --- SISTEM PEMFORMATAN AUTOMATIK (INPUT FILTER) ---
+        // --- FILTER INPUT AUTOMATIK ---
         const setupInputFilters = (nameId, icId) => {
             const nameInput = document.getElementById(nameId);
             const icInput = document.getElementById(icId);
 
-            // Paksa jadi Huruf Besar masa menaip
             nameInput.addEventListener('input', (e) => {
                 e.target.value = e.target.value.toUpperCase();
             });
 
-            // Paksa buang sempang/huruf (hanya terima Digit 0-9 sahaja)
             icInput.addEventListener('input', (e) => {
                 e.target.value = e.target.value.replace(/\D/g, '');
             });
         };
 
-        // Jalankan tapis pada kedua-dua borang (Daftar & Login)
         setupInputFilters('reg-nama', 'reg-ic');
         setupInputFilters('login-nama', 'login-ic');
 
-
-        // ================= ACTION: PROSES PENDAFTARAN PELAJAR =================
+        // ================= PROSES PENDAFTARAN PELAJAR =================
         document.getElementById('form-daftar').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -344,14 +339,12 @@
             }
 
             try {
-                // Semak jika IC dah pernah berdaftar sebagai pelajar
                 const docRef = doc(db, "pelajar", ic);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     alert('Makluman: No. IC ini sudah pun berdaftar sebagai pelajar. Sila terus ke tab Log Masuk.');
                 } else {
-                    // Simpan data baharu ke dalam Cloud Firestore (Koleksi: pelajar)
                     await setDoc(doc(db, "pelajar", ic), {
                         namaPenuh: nama,
                         noIC: ic,
@@ -360,7 +353,7 @@
                     });
                     alert('Pendaftaran Berjaya! Akaun pelajar anda telah disimpan. Anda kini boleh log masuk.');
                     document.getElementById('form-daftar').reset();
-                    switchTab('login'); // Tukar tab ke login secara automatik
+                    switchTab('login');
                 }
             } catch (error) {
                 console.error("Ralat simpan data pelajar:", error);
@@ -368,8 +361,7 @@
             }
         });
 
-
-        // ================= ACTION: PROSES LOG MASUK PELAJAR =================
+        // ================= PROSES LOG MASUK PELAJAR (TELAH DIPERBAIKI) =================
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -377,19 +369,20 @@
             const ic = document.getElementById('login-ic').value.trim();
 
             try {
-                // Ambil data pelajar dari Firestore berdasarkan No. IC
                 const docRef = doc(db, "pelajar", ic);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Sahkan nama penuh sepadan dengan No. IC
                     if(data.namaPenuh === nama) {
+                        // 1. Simpan nama ke sessionStorage untuk paparan di dashboard-pelajar.html
+                        sessionStorage.setItem("pelajarLogMasuk", data.namaPenuh);
+                        
                         alert(`Selamat Datang, ${data.namaPenuh}! Log masuk berjaya.`);
                         
-                        // SINI HALAMAN BARU: Hala ke mukasurat aktiviti/modul pelajar nanti
-                        // window.location.href = "dashboard-pelajar.html"; 
+                        // 2. DIKEMAS KINI: Hala terus ke dashboard pelajar tanpa tersekat
+                        window.location.href = "dashboard-pelajar.html"; 
                     } else {
                         alert('Log Masuk Gagal: Nama Penuh tidak sepadan dengan No. IC yang didaftarkan.');
                     }
