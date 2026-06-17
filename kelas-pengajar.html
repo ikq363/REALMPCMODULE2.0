@@ -83,10 +83,13 @@
         .class-box h3 { font-size: 1.3rem; font-weight: 800; color: var(--primary); line-height: 1.2; margin-bottom: 4px; }
         .class-subjek { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
         
-        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
-        .student-counter { font-size: 0.85rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 6px 12px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
+        .class-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; gap: 8px; }
+        .student-counter { font-size: 0.85rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 8px 12px; border-radius: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
         
-        .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; width: auto; }
+        .action-buttons { display: flex; gap: 6px; align-items: center; }
+        .btn-link-class { background: #f1f5f9; color: var(--text-dark); font-size: 0.9rem; padding: 8px 12px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-link-class:hover { background: #e2e8f0; color: var(--accent-orange); }
+        .btn-view-class { background: var(--primary); color: white; font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
         .btn-view-class:hover { background: #1e293b; }
 
         .gallery-empty { text-align: center; color: var(--text-muted); padding: 60px 0; font-weight: 600; grid-column: 1/-1; }
@@ -172,7 +175,7 @@
                     <div class="info-row" style="display:block;">
                         <span class="info-label">Pautan Link Join Pelajar:</span>
                         <span class="link-value" id="text-link-kelas">Memuatkan...</span>
-                        <button class="btn btn-copy" onclick="salinLink()"><i class="fa-solid fa-copy"></i> Salin Pautan</button>
+                        <button class="btn btn-copy" onclick="salinLinkAsal()"><i class="fa-solid fa-copy"></i> Salin Pautan</button>
                     </div>
                 </div>
             </div>
@@ -184,7 +187,6 @@
                 </div>
                 
                 <div class="gallery-container" id="galeri-kelas-box">
-                    <!-- Kad Kelas dijanakan secara automatik di sini melalui JavaScript -->
                     <div class="gallery-empty">Memuatkan semua maklumat galeri kelas...</div>
                 </div>
             </div>
@@ -236,12 +238,12 @@
         const base_url = window.location.origin + window.location.pathname.replace('kelas-pengajar.html', '');
         let kodKelasAktifSekarang = "";
 
-        // 1. FUNGSI UTAMA: AMBIL DATA KELAS & PAPAR DALAM BENTUK GALERI
+        // 1. FUNGSI UTAMA: AMBIL DATA KELAS & PAPAR DALAM BENTUK GALERI + FORMAT LINK JOIN
         async function muatGaleriKelas() {
             const galeriBox = document.getElementById('galeri-kelas-box');
             try {
                 const querySnapshot = await getDocs(collection(db, "kelas"));
-                galeriBox.innerHTML = ''; // bersihkan keadaan loading
+                galeriBox.innerHTML = ''; 
 
                 if (querySnapshot.empty) {
                     galeriBox.innerHTML = '<div class="gallery-empty">Belum ada kelas berdaftar. Sila cipta kelas baharu di menu kiri.</div>';
@@ -252,6 +254,9 @@
                     const data = doc.data();
                     const kod = doc.id;
                     const bilanganPelajar = data.senaraiPelajar ? data.senaraiPelajar.length : 0;
+                    
+                    // Jana pautan dinamik terus berdasarkan kod kelas semasa loop berjalan
+                    const fullJoinLink = `${base_url}join-kelas.html?code=${kod}`;
 
                     let divCard = document.createElement('div');
                     divCard.className = 'class-box';
@@ -265,9 +270,14 @@
                             <div class="student-counter">
                                 <i class="fa-solid fa-user-group"></i> ${bilanganPelajar} Pelajar
                             </div>
-                            <button class="btn-view-class" onclick="bukaModalPelajar('${kod}', '${data.namaKelas}')">
-                                <i class="fa-solid fa-eye"></i> Lihat Kelas
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn-link-class" onclick="salinLinkTerus('${fullJoinLink}')" title="Salin Pautan Kelas">
+                                    <i class="fa-solid fa-link"></i>
+                                </button>
+                                <button class="btn-view-class" onclick="bukaModalPelajar('${kod}', '${data.namaKelas}')">
+                                    <i class="fa-solid fa-eye"></i> Lihat Kelas
+                                </button>
+                            </div>
                         </div>
                     `;
                     galeriBox.appendChild(divCard);
@@ -278,7 +288,6 @@
             }
         }
         
-        // Jalankan terus galeri setiap kali page diakses
         muatGaleriKelas();
 
         // 2. DAFTAR KELAS BARU & REFRESH GALERI
@@ -309,7 +318,7 @@
                 alert("Kelas baharu berjaya didaftarkan ke sistem!");
                 document.getElementById('form-daftar-kelas').reset();
                 
-                muatGaleriKelas(); // Auto refresh susunan kotak galeri
+                muatGaleriKelas(); 
             } catch (error) {
                 console.error("Ralat daftar kelas:", error);
                 alert("Gagal mendaftar kelas.");
@@ -374,7 +383,6 @@
                     
                     alert("Pelajar telah berjaya dipadam dari kelas.");
                     
-                    // Segarkan semula senarai modal & galeri utama di belakang
                     bukaModalPelajar(kodKelasAktifSekarang, document.getElementById('modal-tajuk-kelas').innerText);
                     muatGaleriKelas();
                 } catch (error) {
@@ -382,6 +390,15 @@
                     alert("Masalah teknikal berlaku, gagal padam pelajar.");
                 }
             }
+        }
+
+        // Expose fungsi salin untuk kegunaan global onclick elemen dinamik
+        window.salinLinkTerus = function(pautan) {
+            navigator.clipboard.writeText(pautan).then(() => {
+                alert("Pautan bagi kelas ini berjaya disalin! Sedia untuk dikongsi kepada pelajar.");
+            }).catch(err => {
+                console.error('Gagal menyalin:', err);
+            });
         }
     </script>
 
@@ -391,7 +408,6 @@
             document.getElementById('modal-pelajar').style.display = 'none';
         }
         
-        // Tutup modal jika user klik luar dari kotak putih modal content
         window.onclick = function(event) {
             const modal = document.getElementById('modal-pelajar');
             if (event.target == modal) {
@@ -399,7 +415,7 @@
             }
         }
 
-        function salinLink() {
+        function salinLinkAsal() {
             const textLink = document.getElementById('text-link-kelas').innerText;
             navigator.clipboard.writeText(textLink).then(() => {
                 alert("Pautan link join kelas disalin!");
