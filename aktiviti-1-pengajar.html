@@ -740,7 +740,7 @@
                 <div class="debug-line"><span class="debug-label">Nama Pengajar:</span> <span class="debug-value" id="debug-nama">-</span></div>
                 <div class="debug-line"><span class="debug-label">Kelas Dipilih:</span> <span class="debug-value" id="debug-kelas">-</span></div>
                 <div class="debug-line"><span class="debug-label">Jumlah Pelajar:</span> <span class="debug-value" id="debug-pelajar">0</span></div>
-                <div class="debug-line"><span class="debug-label">Firestore:</span> <span class="debug-value" id="debug-firestore">Menghubungi...</span></div>
+                <div class="debug-line"><span class="debug-label">Jumlah Kelas:</span> <span class="debug-value" id="debug-kelas-count">0</span></div>
             </div>
         </div>
     </div>
@@ -772,37 +772,66 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // ===================== DATA DUMMY GURU (STRING TERUS) =====================
+        // Data ini diambil dari dashboard-pengajar.html
+        const DATA_GURU = {
+            ic: "881215085431",
+            namaPenuh: "CIKGU AHMAD BIN ABDULLAH",
+            nama: "Cikgu Ahmad"
+        };
+
+        // Data dummy untuk kelas (string terus)
+        const DATA_KELAS_DUMMY = [
+            { id: "kelas_1", nama: "Matematik Tambahan 4A", subjek: "Matematik Tambahan", pelajar: ["P001", "P002", "P003", "P004", "P005", "P006", "P007", "P008"] },
+            { id: "kelas_2", nama: "Matematik Tambahan 4B", subjek: "Matematik Tambahan", pelajar: ["P009", "P010", "P011", "P012", "P013", "P014", "P015"] },
+            { id: "kelas_3", nama: "Matematik Tambahan 5A", subjek: "Matematik Tambahan", pelajar: ["P016", "P017", "P018", "P019", "P020", "P021"] },
+            { id: "kelas_4", nama: "Matematik Tambahan 5B", subjek: "Matematik Tambahan", pelajar: ["P022", "P023", "P024", "P025", "P026", "P027", "P028"] }
+        ];
+
+        // Data dummy untuk nama pelajar
+        const DATA_PELAJAR_DUMMY = {
+            "P001": "Ahmad Bin Abdullah",
+            "P002": "Siti Nurhaliza",
+            "P003": "Mohd Faiz Bin Ali",
+            "P004": "Nurul Iman Binti Hassan",
+            "P005": "Muhammad Hafiz",
+            "P006": "Aisyah Binti Rahman",
+            "P007": "Amirul Hakim",
+            "P008": "Farah Diba",
+            "P009": "Daniel Iskandar",
+            "P010": "Sarah Maisarah",
+            "P011": "Adam Haikal",
+            "P012": "Nadia Zulaikha",
+            "P013": "Haziq Fikri",
+            "P014": "Aina Sofia",
+            "P015": "Rayyan Aqil",
+            "P016": "Qistina Batrisyia",
+            "P017": "Harith Danial",
+            "P018": "Dania Aleesya",
+            "P019": "Izz Aiman",
+            "P020": "Nuraina Qistina",
+            "P021": "Umar Faruq",
+            "P022": "Khadijah Amani",
+            "P023": "Luqman Hakim",
+            "P024": "Mardhiyah Syakirah",
+            "P025": "Rizqin Nasrullah",
+            "P026": "Safiyyah Zara",
+            "P027": "Taufiq Hidayat",
+            "P028": "Wardina Syuhada"
+        };
+
         // ===================== AMBIL IC PENGAJAR DARI SESSION =====================
-        const pengajarIC = sessionStorage.getItem("pengajar_ic") || "881215085431";
+        let icPengajar = sessionStorage.getItem("pengajar_ic");
         
-        // Debug
-        document.getElementById('debug-ic').textContent = pengajarIC;
-        document.getElementById('debug-firestore').textContent = '✅ Firebase disambungkan';
+        // Jika tiada IC di session, guna data dummy
+        if (!icPengajar) {
+            icPengajar = DATA_GURU.ic;
+            sessionStorage.setItem("pengajar_ic", icPengajar);
+            console.log("⚠️ Tiada IC di session, gunakan dummy IC:", icPengajar);
+        }
 
         console.log("=== AKTIVITI 1 PENGAJAR ===");
-        console.log("IC Pengajar dari session:", pengajarIC);
-
-        // ===================== STATE =====================
-        let currentStep = 0;
-        let timerInterval = null;
-        let timeLeft = 0;
-        let isAktivitiActive = false;
-        let selectedClass = null;
-        let pengajarNama = "Memuatkan...";
-        let pelajarList = [];
-
-        // ===================== DATA AKTIVITI =====================
-        const aktivitiData = {
-            id: "aktiviti_1",
-            nama: "Keazaman Menakluk Persamaan",
-            steps: [
-                { id: 1, masa: "15–25 minit", aktivitiMurid: "Menyelesaikan item 1–3 (tahap mudah → sederhana) secara individu. Rujuk nota & bertanya rakan apabila buntu.", durasi: 10 },
-                { id: 2, masa: "25–35 minit", aktivitiMurid: "Membandingkan jawapan sendiri dengan jawapan yang dibincang. Membetulkan kesilapan dan menanda soalan yang belum dikuasai.", durasi: 10 },
-                { id: 3, masa: "35–50 minit", aktivitiMurid: "5 minit: mencuba sendiri di buku. 10 minit: berbincang dalam kumpulan (3–4 orang) untuk mencapai jawapan terbaik, membandingkan kaedah masing-masing. Menulis langkah akhir yang dipersetujui.", durasi: 15 },
-                { id: 4, masa: "50–55 minit", aktivitiMurid: "Menyemak jawapan. Mengajukan soalan jika masih keliru. Menyatakan (secara sukarela) apakah bahagian yang paling sukar.", durasi: 5 },
-                { id: 5, masa: "55–60 minit", aktivitiMurid: "Menjawab soalan refleksi secara individu. Menyerahkan kertas refleksi / simpan dalam fail portfolio.", durasi: 5 }
-            ]
-        };
+        console.log("IC Pengajar:", icPengajar);
 
         // ===================== DOM ELEMENTS =====================
         const btnMula = document.getElementById('btn-mula-aktiviti');
@@ -831,6 +860,34 @@
         const masaLiveEl = document.getElementById('masa-live');
         const tarikhLiveEl = document.getElementById('tarikh-live');
 
+        // Debug elements
+        const debugIc = document.getElementById('debug-ic');
+        const debugNama = document.getElementById('debug-nama');
+        const debugKelas = document.getElementById('debug-kelas');
+        const debugPelajar = document.getElementById('debug-pelajar');
+        const debugKelasCount = document.getElementById('debug-kelas-count');
+
+        // ===================== STATE =====================
+        let currentStep = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let isAktivitiActive = false;
+        let selectedClass = null;
+        let pelajarList = [];
+
+        // ===================== DATA AKTIVITI =====================
+        const aktivitiData = {
+            id: "aktiviti_1",
+            nama: "Keazaman Menakluk Persamaan",
+            steps: [
+                { id: 1, masa: "15–25 minit", aktivitiMurid: "Menyelesaikan item 1–3 (tahap mudah → sederhana) secara individu. Rujuk nota & bertanya rakan apabila buntu.", durasi: 10 },
+                { id: 2, masa: "25–35 minit", aktivitiMurid: "Membandingkan jawapan sendiri dengan jawapan yang dibincang. Membetulkan kesilapan dan menanda soalan yang belum dikuasai.", durasi: 10 },
+                { id: 3, masa: "35–50 minit", aktivitiMurid: "5 minit: mencuba sendiri di buku. 10 minit: berbincang dalam kumpulan (3–4 orang) untuk mencapai jawapan terbaik, membandingkan kaedah masing-masing. Menulis langkah akhir yang dipersetujui.", durasi: 15 },
+                { id: 4, masa: "50–55 minit", aktivitiMurid: "Menyemak jawapan. Mengajukan soalan jika masih keliru. Menyatakan (secara sukarela) apakah bahagian yang paling sukar.", durasi: 5 },
+                { id: 5, masa: "55–60 minit", aktivitiMurid: "Menjawab soalan refleksi secara individu. Menyerahkan kertas refleksi / simpan dalam fail portfolio.", durasi: 5 }
+            ]
+        };
+
         // ===================== FUNGSI =====================
 
         function updateDebug(label, value) {
@@ -851,138 +908,73 @@
             }, 1000);
         }
 
-        // 2. LOAD PROFIL PENGAJAR
-        async function loadPengajarProfile() {
-            try {
-                updateDebug('debug-firestore', 'Mencari pengajar...');
-                const pengRef = doc(db, "pengajar", pengajarIC);
-                const pengSnap = await getDoc(pengRef);
-                
-                if (pengSnap.exists()) {
-                    const data = pengSnap.data();
-                    pengajarNama = data.namaPenuh || data.nama || "Pengajar";
-                    namaPengajarEl.textContent = pengajarNama;
-                    updateDebug('debug-nama', pengajarNama);
-                    updateDebug('debug-firestore', '✅ Pengajar ditemui');
-                    console.log("✅ Pengajar ditemui:", pengajarNama);
-                } else {
-                    namaPengajarEl.textContent = "Pengajar REAL-MPC (Tiada rekod)";
-                    updateDebug('debug-nama', 'Tiada rekod di Firestore');
-                    updateDebug('debug-firestore', '⚠️ Tiada rekod pengajar');
-                    console.warn("⚠️ Tiada rekod pengajar untuk IC:", pengajarIC);
-                }
-            } catch (error) {
-                console.error("Error loading teacher:", error);
-                namaPengajarEl.textContent = "Ralat memuatkan pengajar";
-                updateDebug('debug-firestore', '❌ Ralat: ' + error.message);
-            }
-        }
-
-        // 3. LOAD KELAS PENGAJAR
-        function loadKelasPengajar() {
-            updateDebug('debug-firestore', 'Mencari kelas...');
+        // 1. PAPAR MAKLUMAT GURU DARI DATA DUMMY
+        function paparMaklumatGuru() {
+            const namaPenuh = DATA_GURU.namaPenuh;
             
-            const kelasQuery = query(
-                collection(db, "kelas"),
-                where("pengajarIC", "==", pengajarIC)
-            );
-
-            onSnapshot(kelasQuery, (snapshot) => {
-                selectKelas.innerHTML = '<option value="">-- Sila Pilih Kelas --</option>';
-                
-                console.log("📚 Jumlah kelas ditemui:", snapshot.size);
-                updateDebug('debug-firestore', `✅ ${snapshot.size} kelas ditemui`);
-                
-                if (snapshot.size === 0) {
-                    kelasStatus.textContent = "⚠️ Anda belum mencipta sebarang kelas";
-                    btnMula.disabled = true;
-                    updateDebug('debug-kelas', 'Tiada kelas');
-                    return;
-                }
-
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const kelasId = doc.id;
-                    const namaKelas = data.namaKelas || `Kelas ${kelasId}`;
-                    
-                    const option = document.createElement('option');
-                    option.value = kelasId;
-                    option.textContent = `${namaKelas} (${data.subjek || 'Tiada subjek'})`;
-                    selectKelas.appendChild(option);
-                    
-                    console.log("  - Kelas:", kelasId, namaKelas);
-                });
-
-                kelasStatus.textContent = `✅ ${snapshot.size} kelas ditemui`;
-                updateDebug('debug-kelas', `${snapshot.size} kelas ditemui`);
-                
-            }, (error) => {
-                console.error("Error loading classes:", error);
-                kelasStatus.textContent = "❌ Gagal memuatkan kelas";
-                updateDebug('debug-firestore', '❌ Ralat: ' + error.message);
-            });
+            namaPengajarEl.textContent = namaPenuh;
+            debugIc.textContent = icPengajar;
+            debugNama.textContent = namaPenuh;
+            
+            console.log("✅ Maklumat guru dipaparkan:", namaPenuh);
         }
 
-        // 4. PILIH KELAS
+        // 2. LOAD KELAS DUMMY
+        function loadKelasDummy() {
+            selectKelas.innerHTML = '<option value="">-- Sila Pilih Kelas --</option>';
+            
+            DATA_KELAS_DUMMY.forEach((kelas) => {
+                const option = document.createElement('option');
+                option.value = kelas.id;
+                option.textContent = `${kelas.nama} (${kelas.subjek})`;
+                selectKelas.appendChild(option);
+            });
+
+            kelasStatus.textContent = `✅ ${DATA_KELAS_DUMMY.length} kelas ditemui (Data Dummy)`;
+            debugKelasCount.textContent = DATA_KELAS_DUMMY.length;
+            
+            console.log(`✅ ${DATA_KELAS_DUMMY.length} kelas dummy dimuatkan`);
+        }
+
+        // 3. PILIH KELAS
         selectKelas.addEventListener('change', function() {
             selectedClass = this.value;
             if (selectedClass) {
                 const kelasName = selectKelas.options[selectKelas.selectedIndex].text;
                 kelasStatus.textContent = `✅ Kelas dipilih: ${kelasName}`;
                 btnMula.disabled = false;
-                updateDebug('debug-kelas', kelasName);
-                loadPelajarKelas(selectedClass);
+                debugKelas.textContent = kelasName;
+                loadPelajarDummy(selectedClass);
             } else {
                 kelasStatus.textContent = "⚠️ Sila pilih kelas";
                 btnMula.disabled = true;
                 pelajarCard.classList.add('hidden');
-                updateDebug('debug-kelas', 'Tiada');
+                debugKelas.textContent = 'Tiada';
             }
         });
 
-        // 5. LOAD PELAJAR DARI KELAS
-        function loadPelajarKelas(kelasId) {
-            const kelasRef = doc(db, "kelas", kelasId);
+        // 4. LOAD PELAJAR DUMMY
+        function loadPelajarDummy(kelasId) {
+            const kelas = DATA_KELAS_DUMMY.find(k => k.id === kelasId);
             
-            onSnapshot(kelasRef, async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const senaraiIC = data.senaraiPelajar || [];
-                    
-                    pelajarList = [];
-                    for (const ic of senaraiIC) {
-                        try {
-                            const pelRef = doc(db, "pelajar", ic);
-                            const pelSnap = await getDoc(pelRef);
-                            if (pelSnap.exists()) {
-                                const pelData = pelSnap.data();
-                                pelajarList.push({
-                                    ic: ic,
-                                    nama: pelData.namaPenuh || pelData.nama || ic,
-                                    status: 'waiting'
-                                });
-                            } else {
-                                pelajarList.push({ ic: ic, nama: ic, status: 'waiting' });
-                            }
-                        } catch (error) {
-                            pelajarList.push({ ic: ic, nama: ic, status: 'waiting' });
-                        }
-                    }
-                    
-                    updatePelajarList();
-                    pelajarCard.classList.remove('hidden');
-                    countPelajarTotal.innerText = pelajarList.length;
-                    jumlahPelajarSesi.innerText = `Pelajar: ${pelajarList.length}`;
-                    updateDebug('debug-pelajar', pelajarList.length);
-                    
-                    console.log(`✅ ${pelajarList.length} pelajar dimuatkan`);
-                }
-            }, (error) => {
-                console.error("Error loading students:", error);
-            });
+            if (kelas) {
+                pelajarList = kelas.pelajar.map(ic => ({
+                    ic: ic,
+                    nama: DATA_PELAJAR_DUMMY[ic] || ic,
+                    status: 'waiting'
+                }));
+                
+                updatePelajarList();
+                pelajarCard.classList.remove('hidden');
+                countPelajarTotal.innerText = pelajarList.length;
+                jumlahPelajarSesi.innerText = `Pelajar: ${pelajarList.length}`;
+                debugPelajar.textContent = pelajarList.length;
+                
+                console.log(`✅ ${pelajarList.length} pelajar dimuatkan dari kelas`, kelas.nama);
+            }
         }
 
-        // 6. UPDATE SENARAI PELAJAR
+        // 5. UPDATE SENARAI PELAJAR
         function updatePelajarList() {
             const container = document.getElementById('senarai-pelajar');
             container.innerHTML = '';
@@ -1004,7 +996,7 @@
             });
         }
 
-        // 7. MULA AKTIVITI
+        // 6. MULA AKTIVITI
         function mulaAktiviti() {
             if (!selectedClass) {
                 alert('Sila pilih kelas terlebih dahulu.');
@@ -1033,7 +1025,7 @@
             }, 1000);
         }
 
-        // 8. RENDER STEP
+        // 7. RENDER STEP
         function renderStep(index) {
             const step = aktivitiData.steps[index];
             const totalSteps = aktivitiData.steps.length;
@@ -1080,7 +1072,7 @@
             }
         }
 
-        // 9. TIMER
+        // 8. TIMER
         function startTimer(durasi) {
             clearInterval(timerInterval);
             timeLeft = durasi * 60;
@@ -1102,7 +1094,7 @@
             }, 1000);
         }
 
-        // 10. NEXT STEP
+        // 9. NEXT STEP
         function nextStep() {
             clearInterval(timerInterval);
             
@@ -1115,7 +1107,7 @@
             }
         }
 
-        // 11. TAMAT AKTIVITI
+        // 10. TAMAT AKTIVITI
         function tamatAktiviti() {
             isAktivitiActive = false;
             clearInterval(timerInterval);
@@ -1130,7 +1122,7 @@
             countLangkah.innerText = '5/5 ✅';
         }
 
-        // 12. HENTI AKTIVITI
+        // 11. HENTI AKTIVITI
         function hentiAktiviti() {
             if (!isAktivitiActive) {
                 alert('Aktiviti tidak sedang berjalan.');
@@ -1153,11 +1145,11 @@
             }
         }
 
-        // 13. EXPORT DATA
+        // 12. EXPORT DATA
         function exportData() {
             alert('Data telah dieksport ke console (F12).');
             console.log('=== DATA AKTIVITI ===');
-            console.log('Pengajar:', pengajarNama, 'IC:', pengajarIC);
+            console.log('Pengajar:', DATA_GURU.namaPenuh, 'IC:', icPengajar);
             console.log('Kelas ID:', selectedClass);
             console.log('Pelajar:', pelajarList);
         }
@@ -1193,11 +1185,13 @@
         console.log('🚀 Memulakan Aktiviti 1 Pengajar...');
         
         setMasaTarikh();
-        await loadPengajarProfile();
-        loadKelasPengajar();
+        paparMaklumatGuru();
+        loadKelasDummy();
 
         updateDebug('debug-status', 'Sedia');
         console.log('✅ Aktiviti 1 Pengajar sedia!');
+        console.log('📌 Data Guru:', DATA_GURU);
+        console.log('📊 Data Kelas:', DATA_KELAS_DUMMY.length, 'kelas');
     </script>
 </body>
 </html>
